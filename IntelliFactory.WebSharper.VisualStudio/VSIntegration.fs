@@ -88,6 +88,19 @@ module VSIntegration =
     let getIdentity () =
         VST.ExtensionIdentity.Create(getExtensionName (), getExtensionGuid ())
 
+    type TemplateDef =
+        {
+            PathName : string
+            Name : string
+            DefaultProjectName : string
+            Description : string
+            ProjectFile : string
+            Files :
+                (string -> Templates.FolderElement)
+                -> (string -> Templates.FolderElement list -> Templates.FolderElement)
+                -> Templates.FolderElement list
+        }
+
     let makeProjectTemplate com meta project =
         let identity = getIdentity ()
         let c = Content.ReadBinaryFile(com.Config.NuPkgPath)
@@ -104,41 +117,76 @@ module VSIntegration =
             icon = com.Icon)
             .WithDefaultProjectName(dpn)
 
-    let getLibraryTemplate com =
-        let dir = com.Config.RootPath +/ "templates" +/ "library"
-        let meta =
-            "Creates an F# library capable of containing WebSharper-compiled code."
-            |> makeTemplateMetadata com "Library" "Library"
-        let main = VST.ProjectItem.FromTextFile(dir +/ "Main.fs").ReplaceParameters()
-        let project =
-            VST.Project.FromFile(dir +/ "Library.fsproj",
-                [VST.FolderElement.Nested main])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
-
-    let getExtensionTempalte com =
-        let dir = com.Config.RootPath +/ "templates" +/ "extension"
-        let meta =
-            "Creates a new WebSharper extension to existing JavaScript code using \
-                the WebSharper Interface Generator (WIG) tool."
-            |> makeTemplateMetadata com "Extension" "Extension"
-        let main = VST.ProjectItem.FromTextFile(dir +/ "Main.fs").ReplaceParameters()
-        let project =
-            VST.Project.FromFile(dir +/ "Extension.fsproj",
-                [VST.FolderElement.Nested(main)])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
-
-    let getSiteletsWebsiteTemplate com =
-        let dir = com.Config.RootPath +/ "templates" +/ "sitelets-website"
-        let meta =
-            "Creates a starter client-server web application based on sitelets."
-            |> makeTemplateMetadata com "Client-Server Web Application" "Application"
+    let makeProjectTemplate' com def =
+        let dir = com.Config.RootPath +/ "templates" +/ def.PathName
         let file name =
-            let i = VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
-            VST.FolderElement.Nested(i)
+            VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
+            |> VST.FolderElement.Nested
+        let folder name xs =
+            VST.Folder.Create(name, xs)
+            |> VST.FolderElement.Folder
+        let meta = makeTemplateMetadata com def.Name def.DefaultProjectName def.Description
         let project =
-            VST.Project.FromFile(dir +/ "Application.fsproj",
+            VST.Project.FromFile(dir +/ def.ProjectFile, def.Files file folder)
+                .ReplaceParameters()
+        let identity = getIdentity ()
+        let c = Content.ReadBinaryFile(com.Config.NuPkgPath)
+        let vn = com.VersionInfo
+        let pkg = NG.Package.Create(vn.PackageId, vn.FullVersion, c)
+        let nuGet = VST.NuGetPackages.Create(identity, [pkg])
+        VST.ProjectTemplate.Create(meta, project)
+            .WithNuGetPackages(nuGet)
+
+    let libraryTemplate =
+        {
+            Name = "Library"
+            PathName = "library"
+            DefaultProjectName = "Library"
+            Description =
+                "Creates an F# library capable of containing WebSharper-compiled code."
+            ProjectFile = "Library.fsproj"
+            Files = fun file folder -> [file "Main.fs"]
+        }
+
+    let extensionTemplate =
+        {
+            Name = "Extension"
+            PathName = "extension"
+            DefaultProjectName = "Extension"
+            Description =
+                "Creates a new WebSharper extension to existing JavaScript code using \
+                    the WebSharper Interface Generator (WIG) tool."
+            ProjectFile = "Extension.fsproj"
+            Files = fun file folder -> [file "Main.fs"]
+        }
+
+    let bundleSiteTemplate =
+        {
+            Name = "Single-Page Application"
+            PathName = "bundle-website"
+            DefaultProjectName = "SinglePageApplication"
+            Description =
+                "Creates an empty single-page HTML application."
+            ProjectFile = "SinglePageApplication.fsproj"
+            Files = fun file folder ->
+                [
+                    file "Client.fs"
+                    file "Main.fs"
+                    file "Web.config"
+                    file "Global.asax"
+                    file "index.html"
+                ]
+        }
+
+    let siteletsWebsiteTemplate =
+        {
+            Name = "Client-Server Web Application"
+            PathName = "sitelets-website"
+            DefaultProjectName = "Application"
+            Description =
+                "Creates a starter client-server web application based on sitelets."
+            ProjectFile = "Application.fsproj"
+            Files = fun file folder ->
                 [
                     file "Remoting.fs"
                     file "Client.fs"
@@ -147,71 +195,43 @@ module VSIntegration =
                     file "Global.asax"
                     file "Main.html"
                     file "Setup.fsx"
-                ])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
+                ]
+        }
 
-    let getBundleSiteTemplate com =
-        let dir = com.Config.RootPath +/ "templates" +/ "bundle-website"
-        let meta =
-            "Creates an empty single-page HTML application."
-            |> makeTemplateMetadata com "Single-Page Application" "SinglePageApplication"
-        let file name =
-            let i = VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
-            VST.FolderElement.Nested(i)
-        let project =
-            VST.Project.FromFile(dir +/ "SinglePageApplication.fsproj",
+    let siteletsHtmlTemplate =
+        {
+            Name = "HTML Application"
+            PathName = "sitelets-html"
+            DefaultProjectName = "HtmlApplication"
+            Description =
+                "Creates a starter sitelet-based HTML application."
+            ProjectFile = "HtmlApplication.fsproj"
+            Files = fun file folder ->
                 [
                     file "Client.fs"
                     file "Main.fs"
-                    file "Web.config"
-                    file "Global.asax"
-                    file "index.html"
-                ])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
+                    file "extra.files"
+                    file "Main.html"
+                ]
+        }
 
-    let getSiteletsHtmlTemplate com =
-        let dir = com.Config.RootPath +/ "templates" +/ "sitelets-html"
-        let meta =
-            "Creates a starter sitelet-based HTML application."
-            |> makeTemplateMetadata com "HTML Application" "HtmlApplication"
-        let file repl name =
-            let i = VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
-            VST.FolderElement.Nested(i)
-        let project =
-            VST.Project.FromFile(dir +/ "HtmlApplication.fsproj",
-                [
-                    file true "Client.fs"
-                    file true "Main.fs"
-                    file false "extra.files"
-                    file false "Main.html"
-                ])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
-
-    let getSiteletsHostTemplate com =
-        let dir = com.Config.RootPath +/ "templates" +/ "sitelets-host"
-        let meta =
-            "Creates a C#-based web project for hosting WebSharper sitelets in a web server."
-            |> makeTemplateMetadata com "ASP.NET Container" "Web"
-        let file name =
-            VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
-            |> VST.FolderElement.Nested
-        let folder name xs =
-            let f = VST.Folder.Create(name, xs)
-            VST.FolderElement.Folder(f)
-        let project =
-            VST.Project.FromFile(dir +/ "Web.csproj",
+    let siteletsHostTemplate =
+        {
+            Name = "ASP.NET Container"
+            PathName = "sitelets-host"
+            DefaultProjectName = "Web"
+            Description =
+               "Creates a C#-based web project for hosting WebSharper sitelets in a web server."
+            ProjectFile = "Web.csproj"
+            Files = fun file folder ->
                 [
                     folder "Properties" [
                         file "Properties/AssemblyInfo.cs"
                     ]
                     file "Main.html"
                     file "Web.config"
-                ])
-                .ReplaceParameters()
-        makeProjectTemplate com meta project
+                ]
+        }
 
     let getWebSharperExtension com =
         let desc = getExtensionDecription ()
@@ -237,13 +257,15 @@ module VSIntegration =
         let vsix =
             VX.Vsix.Create(identifier,
                 [
-                    proj (getLibraryTemplate com)
-                    proj (getExtensionTempalte com)
-                    proj (getBundleSiteTemplate com)
-                    proj (getSiteletsWebsiteTemplate com)
-                    proj (getSiteletsHtmlTemplate com)
-                    proj (getSiteletsHostTemplate com)
-                ])
+                    libraryTemplate
+                    extensionTemplate
+                    bundleSiteTemplate
+                    siteletsWebsiteTemplate
+                    siteletsHtmlTemplate
+                    siteletsHostTemplate
+                ]
+                |> List.map (makeProjectTemplate' com >> proj)
+            )
         VX.VsixFile.Create(Path.GetFileName(com.Config.VsixPath), vsix)
 
     let BuildVsixFile cfg =

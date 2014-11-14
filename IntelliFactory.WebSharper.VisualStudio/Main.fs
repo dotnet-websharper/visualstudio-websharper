@@ -8,7 +8,10 @@ let root =
     |> Path.GetFullPath
 
 let configureVSI wsNupkgPath extraNupkgPaths : VSI.Config =
-    let vsixPath = Path.ChangeExtension(wsNupkgPath, ".vsix")
+    let vsixPath =
+        match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
+        | null -> Path.ChangeExtension(wsNupkgPath, ".vsix")
+        | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
     {
         NuPkgPath = wsNupkgPath
         ExtraNuPkgPaths = extraNupkgPaths
@@ -19,7 +22,7 @@ let configureVSI wsNupkgPath extraNupkgPaths : VSI.Config =
 let downloadPackage (source, id) =
     printf "Downloading %s nupkg..." id
     let pkg = FsNuGet.Package.GetLatest(id, ?source = source)
-    let path = sprintf "build/%s.%s.nupkg" pkg.Id pkg.Version
+    let path = Path.Combine("build", sprintf "%s.%s.nupkg" pkg.Id pkg.Version)
     let fullPath = Path.Combine(Directory.GetCurrentDirectory(), path)
     pkg.SaveToFile(fullPath)
     printfn " Got %s." path

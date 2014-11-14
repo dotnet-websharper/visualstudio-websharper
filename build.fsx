@@ -1,5 +1,6 @@
 #load "tools/includes.fsx"
 open IntelliFactory.Build
+open System.IO
 
 let bt =
     BuildTool().PackageId("WebSharper.VisualStudio", "2.5-alpha")
@@ -32,5 +33,21 @@ let main =
 bt.Solution [
     main
     templates
+
+    bt.PackageId("WebSharper.Templates").NuGet.CreatePackage()
+        .Configure(fun c ->
+            { c with
+                Title = Some "WebSharper.Templates"
+                LicenseUrl = Some "http://websharper.com/licensing"
+                ProjectUrl = Some "https://github.com/intellifactory/websharper.visualstudio"
+                Description = "WebSharper Project Templates"
+                RequiresLicenseAcceptance = true })
+        .Add(main)
+    |> Array.foldBack (fun f n -> n.AddFile(f)) (
+        let templatesDir = DirectoryInfo("templates").FullName
+        Directory.GetFiles(templatesDir, "*", SearchOption.AllDirectories)
+        |> Array.map (fun fullPath ->
+            fullPath, "templates/" + fullPath.[templatesDir.Length + 1 ..].Replace('\\', '/'))
+    )
 ]
 |> bt.Dispatch

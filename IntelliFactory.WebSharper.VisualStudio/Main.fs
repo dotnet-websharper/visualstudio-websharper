@@ -28,12 +28,16 @@ let downloadPackage (source, id) =
 [<EntryPoint>]
 let main argv =
     let vsixConfig =
-        let localPath = System.Environment.GetEnvironmentVariable("LocalNuget")
-        let local = Some (FsNuGet.FileSystem localPath)
         let online = None
-        let _, ws = downloadPackage (local, "WebSharper")
+        let local =
+            match System.Environment.GetEnvironmentVariable("LocalNuget") with
+            | null ->
+                eprintfn "Warning: LocalNuget variable not set, using online repository."
+                online
+            | localPath -> Some (FsNuGet.FileSystem localPath)
         let extra =
             [
+                local, "WebSharper"
                 local, "WebSharper.Owin"
                 online, "Owin"
                 online, "Microsoft.Owin"
@@ -46,6 +50,7 @@ let main argv =
             ]
             |> List.map downloadPackage
             |> Map.ofList
+        let ws = extra.["WebSharper"]
         configureVSI ws extra
     printf "Generating vsix installer..."
     VSI.BuildVsixFile vsixConfig

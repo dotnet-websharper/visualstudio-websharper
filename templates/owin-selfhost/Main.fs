@@ -80,23 +80,17 @@ module SelfHostedServer =
     open IntelliFactory.WebSharper.Owin
 
     [<EntryPoint>]
-    let Main args =
-        if args.Length = 2 then
-            let rootDirectory = args.[0]
-            let url = args.[1]
-            try
-                use server = WebApp.Start(url, fun appB ->
-                    appB.UseStaticFiles(
-                            StaticFileOptions(
-                                FileSystem = PhysicalFileSystem(rootDirectory)))
-                        .UseSitelet(rootDirectory, Site.MainSitelet)
-                    |> ignore)
-                stdout.WriteLine("Serving {0}", url)
-                stdin.ReadLine() |> ignore
-                0
-            with e ->
-                eprintfn "Error starting website:\n%s" e.Message
-                1
-        else
+    let Main = function
+        | [| rootDirectory; url |] ->
+            use server = WebApp.Start(url, fun appB ->
+                appB.UseStaticFiles(
+                        StaticFileOptions(
+                            FileSystem = PhysicalFileSystem(rootDirectory)))
+                    .UseSitelet(rootDirectory, Site.MainSitelet)
+                |> ignore)
+            stdout.WriteLine("Serving {0}", url)
+            stdin.ReadLine() |> ignore
+            0
+        | _ ->
             eprintfn "Usage: $safeprojectname$ ROOT_DIRECTORY URL"
             1

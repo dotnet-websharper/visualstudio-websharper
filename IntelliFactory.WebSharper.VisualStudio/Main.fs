@@ -41,7 +41,6 @@ let main argv =
                 online, "Microsoft.Owin.FileSystems"
                 online, "Microsoft.Owin.Host.HttpListener"
                 online, "Microsoft.Owin.Hosting"
-                online, "Microsoft.Owin.SelfHost"
                 online, "Microsoft.Owin.StaticFiles"
                 online, "Mono.Cecil"
             ]

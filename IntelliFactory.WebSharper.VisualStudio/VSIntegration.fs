@@ -262,7 +262,6 @@ module VSIntegration =
                     "Microsoft.Owin.FileSystems"
                     "Microsoft.Owin.Host.HttpListener"
                     "Microsoft.Owin.Hosting"
-                    "Microsoft.Owin.SelfHost"
                     "Microsoft.Owin.StaticFiles"
                     "Mono.Cecil"
                     "Owin"

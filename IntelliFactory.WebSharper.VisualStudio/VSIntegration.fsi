@@ -25,6 +25,9 @@ module VSIntegration =
             /// Path to the WebSharper NuGet package (nupkg).
             NuPkgPath : string
 
+            /// Id and path to extra NuGet packages (nupkg).
+            ExtraNuPkgPaths : Map<string, string>
+
             /// Root path to the WebSharper sources.
             RootPath : string
 

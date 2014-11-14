@@ -388,13 +388,15 @@ module Templates =
                             Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                         E?FullClassName -- "NuGet.VisualStudio.TemplateWizard"
                     ]
-                    yield E?WizardData - [
-                        E?packages + [A?repository "extension"; A?repositoryId pkgs.NGIdentity.FullName] -<
-                        [
+                yield E?WizardData -< [
+                    match this.PTNuGetPackages with
+                    | None -> ()
+                    | Some pkgs ->
+                        yield E?packages + [A?repository "extension"; A?repositoryId pkgs.NGIdentity.FullName] -< [
                             for p in pkgs.NGPackages ->
                                 E?package + [A?id p.Id; A?version p.Version]
                         ]
-                    ]
+                ]
             ]
 
         member this.WithNuGetPackages(?pkgs) =

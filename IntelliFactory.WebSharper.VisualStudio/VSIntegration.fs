@@ -62,6 +62,7 @@ module VSIntegration =
     type Config =
         {
             NuPkgPath : string
+            ExtraNuPkgPaths : Map<string, string>
             RootPath : string
             VsixPath : string
         }
@@ -99,16 +100,8 @@ module VSIntegration =
                 (string -> Templates.FolderElement)
                 -> (string -> Templates.FolderElement list -> Templates.FolderElement)
                 -> Templates.FolderElement list
+            ExtraNuGetPackages : string list
         }
-
-    let makeProjectTemplate com meta project =
-        let identity = getIdentity ()
-        let c = Content.ReadBinaryFile(com.Config.NuPkgPath)
-        let vn = com.VersionInfo
-        let pkg = NG.Package.Create(vn.PackageId, vn.FullVersion, c)
-        let nuGet = VST.NuGetPackages.Create(identity, [pkg])
-        VST.ProjectTemplate.Create(meta, project)
-            .WithNuGetPackages(nuGet)
 
     let makeTemplateMetadata com name dpn desc =
         VST.TemplateData.Create(VST.ProjectType.FSharp,
@@ -117,7 +110,12 @@ module VSIntegration =
             icon = com.Icon)
             .WithDefaultProjectName(dpn)
 
-    let makeProjectTemplate' com def =
+    let readNugetPackage path =
+        let c = Content.ReadBinaryFile(path)
+        let vn = VersionInfo.FromFileName(path).Value
+        NG.Package.Create(vn.PackageId, vn.FullVersion, c)
+
+    let makeProjectTemplate com def =
         let dir = com.Config.RootPath +/ "templates" +/ def.PathName
         let file name =
             VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
@@ -130,10 +128,11 @@ module VSIntegration =
             VST.Project.FromFile(dir +/ def.ProjectFile, def.Files file folder)
                 .ReplaceParameters()
         let identity = getIdentity ()
-        let c = Content.ReadBinaryFile(com.Config.NuPkgPath)
-        let vn = com.VersionInfo
-        let pkg = NG.Package.Create(vn.PackageId, vn.FullVersion, c)
-        let nuGet = VST.NuGetPackages.Create(identity, [pkg])
+        let extraPkgs =
+            def.ExtraNuGetPackages
+            |> List.map (fun x -> readNugetPackage (Map.find x com.Config.ExtraNuPkgPaths))
+        let pkgs = readNugetPackage com.Config.NuPkgPath :: extraPkgs
+        let nuGet = VST.NuGetPackages.Create(identity, pkgs)
         VST.ProjectTemplate.Create(meta, project)
             .WithNuGetPackages(nuGet)
 
@@ -146,6 +145,7 @@ module VSIntegration =
                 "Creates an F# library capable of containing WebSharper-compiled code."
             ProjectFile = "Library.fsproj"
             Files = fun file folder -> [file "Main.fs"]
+            ExtraNuGetPackages = []
         }
 
     let extensionTemplate =
@@ -158,6 +158,7 @@ module VSIntegration =
                     the WebSharper Interface Generator (WIG) tool."
             ProjectFile = "Extension.fsproj"
             Files = fun file folder -> [file "Main.fs"]
+            ExtraNuGetPackages = []
         }
 
     let bundleSiteTemplate =
@@ -176,6 +177,7 @@ module VSIntegration =
                     file "Global.asax"
                     file "index.html"
                 ]
+            ExtraNuGetPackages = []
         }
 
     let siteletsWebsiteTemplate =
@@ -196,6 +198,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
+            ExtraNuGetPackages = []
         }
 
     let siteletsHtmlTemplate =
@@ -213,6 +216,7 @@ module VSIntegration =
                     file "extra.files"
                     file "Main.html"
                 ]
+            ExtraNuGetPackages = []
         }
 
     let siteletsHostTemplate =
@@ -230,6 +234,39 @@ module VSIntegration =
                     ]
                     file "Main.html"
                     file "Web.config"
+                ]
+            ExtraNuGetPackages = []
+        }
+
+    let owinSelfHostTemplate =
+        {
+            Name = "Self-Hosted Client-Server Application"
+            PathName = "owin-selfhost"
+            DefaultProjectName = "Application"
+            Description =
+                "Creates a starter client-server web application based on sitelets, \
+                running as a dedicated executable using an OWIN host."
+            ProjectFile = "SelfHostApplication.fsproj"
+            Files = fun file folder ->
+                [
+                    file "Remoting.fs"
+                    file "Client.fs"
+                    file "Main.fs"
+                    file "App.config"
+                    file "Main.html"
+                ]
+            ExtraNuGetPackages =
+                [
+                    "Microsoft.Owin"
+                    "Microsoft.Owin.Diagnostics"
+                    "Microsoft.Owin.FileSystems"
+                    "Microsoft.Owin.Host.HttpListener"
+                    "Microsoft.Owin.Hosting"
+                    "Microsoft.Owin.SelfHost"
+                    "Microsoft.Owin.StaticFiles"
+                    "Mono.Cecil"
+                    "Owin"
+                    "WebSharper.Owin"
                 ]
         }
 
@@ -263,8 +300,9 @@ module VSIntegration =
                     siteletsWebsiteTemplate
                     siteletsHtmlTemplate
                     siteletsHostTemplate
+                    owinSelfHostTemplate
                 ]
-                |> List.map (makeProjectTemplate' com >> proj)
+                |> List.map (makeProjectTemplate com >> proj)
             )
         VX.VsixFile.Create(Path.GetFileName(com.Config.VsixPath), vsix)
 

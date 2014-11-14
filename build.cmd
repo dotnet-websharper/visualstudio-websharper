@@ -9,4 +9,8 @@ set PATH=%PATH%;%ProgramFiles%\Microsoft SDKs\F#\3.0\Framework\v4.0
 set PATH=%PATH%;tools\NuGet
 nuget install IntelliFactory.Build -nocache -pre -ExcludeVersion -o tools\packages
 fsi.exe --exec build.fsx %*
+
+if not "%LocalNuget%"=="" goto :run
+set LocalNuGet="c:\Pub\Dropbox\nuget"
+:run
 build\net45\IntelliFactory.WebSharper.VisualStudio.exe

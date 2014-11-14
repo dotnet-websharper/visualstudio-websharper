@@ -4,6 +4,17 @@ open IntelliFactory.Build
 let bt =
     BuildTool().PackageId("WebSharper.VisualStudio", "2.5-alpha")
 
+let templates =
+    bt.FSharp.Library("IntelliFactory.WebSharper.Templates")
+        .SourcesFromProject()
+        .References(fun r ->
+            [
+                r.Assembly("System.Xml")
+                r.Assembly("System.Xml.Linq")
+                r.NuGet("FsNuget").Reference()
+                r.NuGet("SharpCompress").Reference()
+            ])
+
 let main =
     bt.FSharp.ConsoleExecutable("IntelliFactory.WebSharper.VisualStudio")
         .SourcesFromProject()
@@ -20,5 +31,6 @@ let main =
 
 bt.Solution [
     main
+    templates
 ]
 |> bt.Dispatch

@@ -5,14 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>5770ce15-c3d9-4da2-be08-4861c7631b64</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>IntelliFactory.WebSharper.VisualStudio</RootNamespace>
-    <AssemblyName>IntelliFactory.WebSharper.VisualStudio</AssemblyName>
+    <ProjectGuid>a2e2001e-6a3f-4edf-a99d-7165b89de012</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>IntelliFactory.WebSharper.Templates</RootNamespace>
+    <AssemblyName>IntelliFactory.WebSharper.Templates</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>IntelliFactory.WebSharper.VisualStudio</Name>
+    <Name>IntelliFactory.WebSharper.Templates</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,9 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\IntelliFactory.WebSharper.VisualStudio.XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>bin\Debug\IntelliFactory.WebSharper.Templates.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,9 +30,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Release\IntelliFactory.WebSharper.VisualStudio.XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>bin\Release\IntelliFactory.WebSharper.Templates.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -44,17 +39,12 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils.fsi" />
-    <Compile Include="Utils.fs" />
-    <Compile Include="NuGet.fsi" />
-    <Compile Include="NuGet.fs" />
+    <Compile Include="Utility.fs" />
+    <Compile Include="FileSet.fsi" />
+    <Compile Include="FileSet.fs" />
     <Compile Include="Templates.fsi" />
     <Compile Include="Templates.fs" />
-    <Compile Include="Extensions.fsi" />
-    <Compile Include="Extensions.fs" />
-    <Compile Include="VSIntegration.fsi" />
-    <Compile Include="VSIntegration.fs" />
-    <Compile Include="Main.fs" />
+    <Compile Include="All.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

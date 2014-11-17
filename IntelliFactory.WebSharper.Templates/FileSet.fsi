@@ -37,9 +37,9 @@ type FileSet =
     /// Reads all files in a given directory.
     static member FromDirectory : path: string -> FileSet
 
-    /// Reads all files in a given zip stream.
-    static member FromZip : Stream -> FileSet
+    /// Reads all files in a subdirectory of a given zip stream.
+    static member FromZip : Stream * ?subdirectory: string -> FileSet
 
-    /// Reads all files in a given zip file.
-    static member FromZipFile : path: string -> FileSet
+    /// Reads all files in a subdirectory of a given zip file.
+    static member FromZipFile : path: string * ?subdirectory: string -> FileSet
 

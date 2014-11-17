@@ -34,9 +34,6 @@ type LocalSource =
         TargetsFile : string
     }
 
-    /// Creates default source using standard layout under root.
-    static member Create : root: string -> LocalSource
-
 /// Represents how to get the WebSharper NuGet package (nupkg) to use.
 [<Sealed>]
 type NuGetPackage =
@@ -57,7 +54,10 @@ type NuGetPackage =
 type NuGetSource =
     {
         /// How to get the WebSharper NuGet package.
-        NuGetPackage : NuGetPackage
+        WebSharperNuGetPackage : NuGetPackage
+
+        /// How to get the WebSharper.Templates NuGet package.
+        WebSharperTemplatesNuGetPackage : NuGetPackage
 
         /// Path to a directory where packages should be installed.
         PackagesDirectory : string

@@ -40,6 +40,13 @@ module FileSetImplementation =
         path.Split(chars, StringSplitOptions.RemoveEmptyEntries)
         |> Array.toList
 
+    /// If `child` is a subpath of `parent`, return only the sub-component; else, None.
+    let rec GetSubpathIfChild parent child =
+        match parent, child with
+        | [], c -> Some c
+        | (p :: ps), (c :: cs) when p = c -> GetSubpathIfChild ps cs
+        | _ -> None
+
     let Parent entries =
         match List.rev entries with
         | [] -> []
@@ -87,17 +94,27 @@ module FileSetImplementation =
             |> Seq.map (fun d -> (d.Name, d))
         BuildDir { ListFiles = listFiles; ListDirs = listDirs } dir
 
-    let ReadZip (stream: Stream) =
+    let ReadZip (stream: Stream) (subdirectory: string option) =
+        let writeToPath =
+            match subdirectory with
+            | None -> Some
+            | Some d ->
+                let d = SplitPath d
+                fun (pathInZip: string) ->
+                    let p = SplitPath pathInZip
+                    GetSubpathIfChild d p
+                    |> Option.map (String.concat "/")
         use re = Reader.ReaderFactory.Open(stream)
         let all = ResizeArray()
         while re.MoveToNextEntry() do
             if not re.Entry.IsDirectory then
-                let path = re.Entry.FilePath
-                let bytes =
-                    use m = new MemoryStream()
-                    re.WriteEntryTo(m)
-                    m.ToArray()
-                all.Add(path, bytes)
+                writeToPath re.Entry.FilePath
+                |> Option.iter (fun path ->
+                    let bytes =
+                        use m = new MemoryStream()
+                        re.WriteEntryTo(m)
+                        m.ToArray()
+                    all.Add(path, bytes))
         GroupEntries all
 
     let rec Populate (FSDir d) (out: string) =
@@ -132,9 +149,9 @@ type FileSet(dir: FSDir) =
         if d.Exists then FileSet(ReadDir d) else
             invalidArg "path" (sprintf "No such directory: %s" path)
 
-    static member FromZip(s) =
-        FileSet(ReadZip s)
+    static member FromZip(s, ?subdirectory) =
+        FileSet(ReadZip s subdirectory)
 
-    static member FromZipFile(path: string) =
+    static member FromZipFile(path: string, ?subdirectory) =
         use stream = File.OpenRead(path)
-        FileSet.FromZip(stream)
+        FileSet.FromZip(stream, ?subdirectory = subdirectory)

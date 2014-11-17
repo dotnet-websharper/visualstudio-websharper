@@ -40,7 +40,8 @@ type NuGetPackage =
 
 type NuGetSource =
     {
-        NuGetPackage : NuGetPackage
+        WebSharperNuGetPackage : NuGetPackage
+        WebSharperTemplatesNuGetPackage : NuGetPackage
         PackagesDirectory : string
     }
 
@@ -171,6 +172,8 @@ module Implementation =
         for p in All opts do
             ExpandVariables opts p
 
+    /// Compute a path equivalent to `path`, but relative to `baseDir`.
+    /// For ex. `RelPath "c:/foo/bar" "c:/foo/baz/qux.txt" = "../baz/qux.txt"`
     let RelPath baseDir path =
         let baseDir = Path.GetFullPath(baseDir)
         let path = Path.GetFullPath(path)
@@ -191,9 +194,9 @@ module Implementation =
                 |> String.concat "/"
         loop (split baseDir) (split path)
 
-    let InstallTargetsTo targets p =
-        let relPath = RelPath (Path.GetDirectoryName(p)) targets
-        let doc = XDocument.Parse(File.ReadAllText(p))
+    let InstallTargetsTo targetsFilePath projectFilePath =
+        let relPath = RelPath (Path.GetDirectoryName(projectFilePath)) targetsFilePath
+        let doc = XDocument.Parse(File.ReadAllText(projectFilePath))
         let ns = doc.Root.Name.Namespace
         let imp = ns.GetName("Import")
         let proj = XName.Get("Project")
@@ -207,24 +210,25 @@ module Implementation =
             el.SetAttributeValue(proj, relPath)
             doc.Root.Add(el)
         let str = doc.ToString()
-        File.WriteAllText(p, doc.ToString(), NeutralEncoding)
-        File.WriteAllLines(p, File.ReadAllLines(p), NeutralEncoding)
+        File.WriteAllText(projectFilePath, doc.ToString(), NeutralEncoding)
+        CopyTextFile projectFilePath projectFilePath // I assume this fixes line endings?
 
     let InstallNuGet (nuget: NuGetSource) =
-        let ws =
-            match nuget.NuGetPackage with
+        let getPackage publicName = function
             | PkgLatestPublic ->
-                FsNuGet.Package.GetLatest("WebSharper")
+                FsNuGet.Package.GetLatest(publicName)
             | PkgBytes bytes ->
                 FsNuGet.Package.FromBytes(bytes)
-        let path = Path.Combine(nuget.PackagesDirectory, ws.Text)
-        ws.Install(path)
-        path
+        let ws = getPackage "WebSharper" nuget.WebSharperNuGetPackage
+        let wsRoot = Path.Combine(nuget.PackagesDirectory, ws.Text)
+        ws.Install(wsRoot)
+        let wsTpl = getPackage "WebSharper.Templates" nuget.WebSharperTemplatesNuGetPackage
+        wsRoot, wsTpl.DataStream
 
-    let CreateLocalSource root =
+    let CreateLocalSource wsRoot wsTpl =
         {
-            FileSet = FileSet.FromZipFile(Path.Combine(root, "templates/templates.zip"))
-            TargetsFile = Path.Combine(root, "build", "WebSharper.targets")
+            FileSet = FileSet.FromZip(wsTpl, subdirectory = "templates")
+            TargetsFile = Path.Combine(wsRoot, "build", "WebSharper.targets")
         }
 
     let InitSource src =
@@ -232,7 +236,7 @@ module Implementation =
         | SLocal local -> local
         | SNuGet nuget ->
             InstallNuGet nuget
-            |> CreateLocalSource
+            ||> CreateLocalSource
 
     let InstallTargets opts local =
         for p in All opts do
@@ -265,14 +269,12 @@ type Source with
     static member Local(s) = SLocal s
     static member NuGet(s) = SNuGet s
 
-type LocalSource with
-    static member Create(root) = CreateLocalSource root
-
 type NuGetSource with
 
     static member Create() =
         {
-            NuGetPackage = NuGetPackage.LatestPublic()
+            WebSharperNuGetPackage = NuGetPackage.LatestPublic()
+            WebSharperTemplatesNuGetPackage = NuGetPackage.LatestPublic()
             PackagesDirectory = "packages"
         }
 

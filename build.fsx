@@ -42,7 +42,7 @@ bt.Solution [
                 ProjectUrl = Some "https://github.com/intellifactory/websharper.visualstudio"
                 Description = "WebSharper Project Templates"
                 RequiresLicenseAcceptance = true })
-        .Add(main)
+        .Add(templates)
     |> Array.foldBack (fun f n -> n.AddFile(f)) (
         let templatesDir = DirectoryInfo("templates").FullName
         Directory.GetFiles(templatesDir, "*", SearchOption.AllDirectories)

@@ -6,7 +6,8 @@ let bt =
     BuildTool().PackageId("WebSharper.VisualStudio", "2.5-alpha")
 
 let templates =
-    bt.FSharp.Library("IntelliFactory.WebSharper.Templates")
+    bt.WithFramework(bt.Framework.Net40)
+        .FSharp.Library("IntelliFactory.WebSharper.Templates")
         .SourcesFromProject()
         .References(fun r ->
             [

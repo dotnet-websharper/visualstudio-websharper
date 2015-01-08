@@ -1,6 +1,6 @@
 namespace $safeprojectname$
 
-open IntelliFactory.WebSharper.Html.Client
+open IntelliFactory.WebSharper.Html.Server
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Sitelets
 

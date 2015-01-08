@@ -1,9 +1,10 @@
 namespace $safeprojectname$
 
 open IntelliFactory.WebSharper
+open IntelliFactory.WebSharper.JavaScript
 
 [<JavaScript>]
 module Client =
 
     let Main =
-        JavaScript.Log("Running JavaScript Entry Point..")
+        Console.Log("Running JavaScript Entry Point..")

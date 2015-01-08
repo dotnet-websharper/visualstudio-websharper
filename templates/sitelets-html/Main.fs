@@ -1,6 +1,6 @@
 namespace $safeprojectname$
 
-open IntelliFactory.Html
+open IntelliFactory.WebSharper.Html.Client
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Sitelets
 
@@ -24,7 +24,7 @@ module Skin =
     type Page =
         {
             Title : string
-            Body : list<Content.HtmlElement>
+            Body : list<Element>
         }
 
     let MainTemplate =

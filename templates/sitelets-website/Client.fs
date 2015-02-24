@@ -15,7 +15,7 @@ module Client =
         |> Async.Start
 
     let Main () =
-        let input = Input [Text ""]
+        let input = Input [Attr.Value ""]
         let label = Div [Text ""]
         Div [
             input

@@ -19,31 +19,27 @@
 //
 // $end{copyright}
 
-namespace IntelliFactory.WebSharper.Templates
+namespace WebSharper.Templates
 
 open System
 open System.IO
 
-[<AutoOpen>]
-module internal Utility =
+/// Represents a set of (template) files.
+[<Sealed>]
+type FileSet =
 
-    let ReadStream (s: Stream) =
-        use m = new MemoryStream()
-        s.CopyTo(m)
-        m.ToArray()
+    /// Writes to a given directory.
+    member Populate : targetDir: string -> unit
 
-    let IsFile path =
-        FileInfo(path).Exists
+    /// "cd" operation on a FileSet.
+    member Item : string -> FileSet with get
 
-    let IsDir path =
-        DirectoryInfo(path).Exists
+    /// Reads all files in a given directory.
+    static member FromDirectory : path: string -> FileSet
 
-    let NotDir path =
-        not (IsDir path)
+    /// Reads all files in a subdirectory of a given zip stream.
+    static member FromZip : Stream * ?subdirectory: string -> FileSet
 
-    let NotFile path =
-        not (IsFile path)
+    /// Reads all files in a subdirectory of a given zip file.
+    static member FromZipFile : path: string * ?subdirectory: string -> FileSet
 
-    let EnsureDir path =
-        if NotDir path then
-            Directory.CreateDirectory(path) |> ignore

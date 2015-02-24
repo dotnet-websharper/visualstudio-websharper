@@ -1,9 +1,9 @@
 namespace $safeprojectname$
 
-open IntelliFactory.WebSharper
+open WebSharper
 
 module Definition =
-    open IntelliFactory.WebSharper.InterfaceGenerator
+    open WebSharper.InterfaceGenerator
 
     let I1 =
         Interface "I1"
@@ -45,7 +45,7 @@ module Definition =
             ]
         ]
 
-open IntelliFactory.WebSharper.InterfaceGenerator
+open WebSharper.InterfaceGenerator
 
 [<Sealed>]
 type Extension() =

@@ -12,7 +12,7 @@
 // implied.  See the License for the specific language governing
 // permissions and limitations under the License.
 
-namespace IntelliFactory.WebSharper.VisualStudio
+namespace WebSharper.VisualStudio
 
 /// Provides a facility to generate VisualStudio template archive files.
 /// These typically have a `.zip` extension and contain `.vstemplate` XML manifests.

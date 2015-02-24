@@ -1,7 +1,7 @@
-﻿module IntelliFactory.WebSharper.VisualStudio.Main
+﻿module WebSharper.VisualStudio.Main
 
 open System.IO
-module VSI = IntelliFactory.WebSharper.VisualStudio.VSIntegration
+module VSI = WebSharper.VisualStudio.VSIntegration
 
 let root =
     Path.Combine(__SOURCE_DIRECTORY__, "..")

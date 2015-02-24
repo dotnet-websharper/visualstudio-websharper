@@ -19,27 +19,17 @@
 //
 // $end{copyright}
 
-namespace IntelliFactory.WebSharper.Templates
+namespace WebSharper.Templates
 
-open System
-open System.IO
+open WebSharper
 
-/// Represents a set of (template) files.
-[<Sealed>]
-type FileSet =
-
-    /// Writes to a given directory.
-    member Populate : targetDir: string -> unit
-
-    /// "cd" operation on a FileSet.
-    member Item : string -> FileSet with get
-
-    /// Reads all files in a given directory.
-    static member FromDirectory : path: string -> FileSet
-
-    /// Reads all files in a subdirectory of a given zip stream.
-    static member FromZip : Stream * ?subdirectory: string -> FileSet
-
-    /// Reads all files in a subdirectory of a given zip file.
-    static member FromZipFile : path: string * ?subdirectory: string -> FileSet
-
+/// Re-export all types so that F# users can say:
+/// module T = WebSharper.Templates.All
+module All =
+    type FileSet = Templates.FileSet
+    type InitOptions = Templates.InitOptions
+    type LocalSource = Templates.LocalSource
+    type NuGetPackage = Templates.NuGetPackage
+    type NuGetSource = Templates.NuGetSource
+    type Source = Templates.Source
+    type Template = Templates.Template

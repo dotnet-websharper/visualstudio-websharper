@@ -8,4 +8,4 @@ export MonoHome
 export NuGetHome
 mono $NuGetHome/NuGet.exe install IntelliFactory.Build -pre -ExcludeVersion -o tools/packages
 mono $FSharpHome/fsi.exe --exec build.fsx %* &&\
-mono build/net45/IntelliFactory.WebSharper.VisualStudio.exe
+mono build/net45/WebSharper.VisualStudio.exe

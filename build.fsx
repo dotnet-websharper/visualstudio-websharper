@@ -7,7 +7,7 @@ let bt =
 
 let templates =
     bt.WithFramework(bt.Framework.Net40)
-        .FSharp.Library("IntelliFactory.WebSharper.Templates")
+        .FSharp.Library("WebSharper.Templates")
         .SourcesFromProject()
         .References(fun r ->
             [
@@ -18,7 +18,7 @@ let templates =
             ])
 
 let main =
-    bt.FSharp.ConsoleExecutable("IntelliFactory.WebSharper.VisualStudio")
+    bt.FSharp.ConsoleExecutable("WebSharper.VisualStudio")
         .SourcesFromProject()
         .References(fun r ->
             [

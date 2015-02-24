@@ -12,25 +12,26 @@
 // implied.  See the License for the specific language governing
 // permissions and limitations under the License.
 
-namespace IntelliFactory.WebSharper.VisualStudio
+namespace WebSharper.VisualStudio
 
-/// NuGet-related functionality.
 module NuGet =
     open System
     type Content = Utils.Content
 
-    /// A compiled NuGet package together with its contents.
-    [<Sealed>]
     type Package =
+        {
+            PContent : Content
+            PId : string
+            PVersion : string
+        }
 
-        /// The content.
-        member Content : Content
+        member p.Content = p.PContent
+        member p.Id = p.PId
+        member p.Version = p.PVersion
 
-        /// The short name.
-        member Id : string
-
-        /// The version.
-        member Version : string
-
-        /// Creates a new instance.
-        static member Create : id: string * version: string * Content -> Package
+        static member Create(id: string, version: string, c: Content) =
+            {
+                PContent = c
+                PId = id
+                PVersion = version
+            }

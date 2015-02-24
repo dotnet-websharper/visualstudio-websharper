@@ -19,7 +19,7 @@
 //
 // $end{copyright}
 
-namespace IntelliFactory.WebSharper.VisualStudio
+namespace WebSharper.VisualStudio
 
 open System
 open System.IO

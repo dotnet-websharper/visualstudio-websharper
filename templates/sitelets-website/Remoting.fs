@@ -1,6 +1,6 @@
 ﻿namespace $safeprojectname$
 
-open IntelliFactory.WebSharper
+open WebSharper
 
 module Remoting =
 

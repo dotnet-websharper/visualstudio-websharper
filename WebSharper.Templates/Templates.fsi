@@ -19,7 +19,7 @@
 //
 // $end{copyright}
 
-namespace IntelliFactory.WebSharper.Templates
+namespace WebSharper.Templates
 
 open System
 open System.IO

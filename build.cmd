@@ -10,4 +10,4 @@ set PATH=%PATH%;tools\NuGet
 nuget install IntelliFactory.Build -nocache -pre -ExcludeVersion -o tools\packages
 fsi.exe --exec build.fsx %*
 
-build\net45\IntelliFactory.WebSharper.VisualStudio.exe
+build\net45\WebSharper.VisualStudio.exe

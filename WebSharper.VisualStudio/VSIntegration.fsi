@@ -12,7 +12,7 @@
 // implied.  See the License for the specific language governing
 // permissions and limitations under the License.
 
-namespace IntelliFactory.WebSharper.VisualStudio
+namespace WebSharper.VisualStudio
 
 /// Together with files under `templates` fodler, this module
 /// defines Visual Studio templates and extensions for WebSharper.

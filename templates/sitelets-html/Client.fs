@@ -1,8 +1,8 @@
 ﻿namespace $safeprojectname$
 
-open IntelliFactory.WebSharper
-open IntelliFactory.WebSharper.JavaScript
-open IntelliFactory.WebSharper.Html.Client
+open WebSharper
+open WebSharper.JavaScript
+open WebSharper.Html.Client
 
 [<JavaScript>]
 module Client =

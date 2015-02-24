@@ -1,8 +1,8 @@
 namespace $safeprojectname$
 
-open IntelliFactory.WebSharper.Html.Server
-open IntelliFactory.WebSharper
-open IntelliFactory.WebSharper.Sitelets
+open WebSharper.Html.Server
+open WebSharper
+open WebSharper.Sitelets
 
 type Action =
     | Home
@@ -77,7 +77,7 @@ module SelfHostedServer =
     open Microsoft.Owin.Hosting
     open Microsoft.Owin.StaticFiles
     open Microsoft.Owin.FileSystems
-    open IntelliFactory.WebSharper.Owin
+    open WebSharper.Owin
 
     [<EntryPoint>]
     let Main = function

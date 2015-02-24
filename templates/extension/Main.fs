@@ -1,9 +1,10 @@
 namespace $safeprojectname$
 
 open WebSharper
+open WebSharper.JavaScript
+open WebSharper.InterfaceGenerator
 
 module Definition =
-    open WebSharper.InterfaceGenerator
 
     let I1 =
         Interface "I1"
@@ -13,39 +14,33 @@ module Definition =
             ]
 
     let I2 =
-        Generic / fun t1 t2 ->
+        Generic - fun t1 t2 ->
             Interface "I2"
             |+> [
                     Generic - fun m1 -> "foo" => m1 * t1 ^-> t2
                 ]
 
     let C1 =
-        let C1T = Type.New ()
         Class "C1"
-        |=> C1T
-        |+> Protocol [
-                "foo" =% T<int>
+        |+> Instance [
+                "foo" =@ T<int>
             ]
-        |+> [
+        |+> Static [
                 Constructor (T<unit> + T<int>)
                 "mem"   => (T<unit> + T<int> ^-> T<unit>)
-                "test2" => (C1T -* T<int> ^-> T<unit>) * T<string> ^-> T<string>
-                "radius2" =@ T<float>
+                "test2" => (TSelf -* T<int> ^-> T<unit>) * T<string> ^-> T<string>
+                "radius2" =? T<float>
                 |> WithSourceName "R2"
-                "length"   =% T<int>
-                |> WithSourceName "L2"
             ]
 
     let Assembly =
         Assembly [
             Namespace "Extension1" [
                  I1
-                 Generic - I2
+                 I2
                  C1
             ]
         ]
-
-open WebSharper.InterfaceGenerator
 
 [<Sealed>]
 type Extension() =

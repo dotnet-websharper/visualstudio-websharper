@@ -111,7 +111,7 @@ module Implementation =
     let IsTextFile path =
         match Path.GetExtension(path) with
         | ".asax" | ".config" | ".cs" | ".csproj"
-        | ".files" | ".fs" | ".fsproj" | ".fsx" -> true
+        | ".files" | ".fs" | ".fsproj" | ".fsx" | ".html" -> true
         | _ -> false
 
     let NeutralEncoding =

@@ -217,20 +217,20 @@ module Implementation =
             // Remove existing references
             libPaths |> Array.iter (fun p ->
                 let asmName = Path.GetFileNameWithoutExtension(p)
-                doc.Elements(XName.Get("Reference"))
+                doc.Root.Elements(ns.GetName("ItemGroup")).Descendants(ns.GetName("Reference"))
                 |> Seq.tryFind (fun e -> Path.GetFileNameWithoutExtension(e.Value) = asmName)
                 |> Option.iter (fun e -> e.Remove()))
             // Remove empty ItemGroups resulting from the above
-            doc.Elements(XName.Get("ItemGroup"))
+            doc.Root.Elements(ns.GetName("ItemGroup"))
             |> Seq.filter (fun e -> e.IsEmpty)
             |> Seq.iter (fun e -> e.Remove())
             // Add new references
-            let ig = XElement(XName.Get("ItemGroup"))
+            let ig = XElement(ns.GetName("ItemGroup"))
             libPaths |> Array.map (fun p ->
-                XElement(XName.Get("Reference"),
+                XElement(ns.GetName("Reference"),
                     XAttribute(XName.Get("Include"), Path.GetFileNameWithoutExtension p),
-                    XElement(XName.Get("HintPath"), XText(p)),
-                    XElement(XName.Get("Private"), XText("true"))))
+                    XElement(ns.GetName("HintPath"), XText(p)),
+                    XElement(ns.GetName("Private"), XText("true"))))
             |> Array.iter ig.Add
             doc.Root.Add ig
         let str = doc.ToString()

@@ -32,6 +32,9 @@ type LocalSource =
 
         /// Path to WebSharper.targets
         TargetsFile : string
+
+        /// Path to the lib directory
+        LibDir : string
     }
 
 /// Represents how to get the WebSharper NuGet package (nupkg) to use.

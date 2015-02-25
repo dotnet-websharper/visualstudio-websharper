@@ -32,6 +32,7 @@ type LocalSource =
     {
         FileSet : FileSet
         TargetsFile : string
+        LibDir : string
     }
 
 type NuGetPackage =
@@ -194,21 +195,44 @@ module Implementation =
                 |> String.concat "/"
         loop (split baseDir) (split path)
 
-    let InstallTargetsTo targetsFilePath projectFilePath =
-        let relPath = RelPath (Path.GetDirectoryName(projectFilePath)) targetsFilePath
+    let InstallRefsTo (ws: LocalSource) projectFilePath =
+        let getRelPath p = RelPath (Path.GetDirectoryName(projectFilePath)) p
+        let targetsRelPath = getRelPath ws.TargetsFile
         let doc = XDocument.Parse(File.ReadAllText(projectFilePath))
         let ns = doc.Root.Name.Namespace
         let imp = ns.GetName("Import")
-        let proj = XName.Get("Project")
-        let ok (el: XElement) =
-            match el.Attribute(proj) with
-            | null -> false
-            | p when p.Value = relPath -> true
-            | _ -> false
-        if doc.Elements(imp) |> Seq.forall (ok >> not) then
-            let el = XElement(imp)
-            el.SetAttributeValue(proj, relPath)
-            doc.Root.Add(el)
+        do // Install .targets file
+            let proj = XName.Get("Project")
+            let ok (el: XElement) =
+                match el.Attribute(proj) with
+                | null -> false
+                | p when p.Value = targetsRelPath -> true
+                | _ -> false
+            if doc.Elements(imp) |> Seq.forall (ok >> not) then
+                let el = XElement(imp)
+                el.SetAttributeValue(proj, targetsRelPath)
+                doc.Root.Add(el)
+        do // Install lib/net40/*.dll
+            let libPaths = Directory.GetFiles(ws.LibDir) |> Array.map getRelPath
+            // Remove existing references
+            libPaths |> Array.iter (fun p ->
+                let asmName = Path.GetFileNameWithoutExtension(p)
+                doc.Elements(XName.Get("Reference"))
+                |> Seq.tryFind (fun e -> Path.GetFileNameWithoutExtension(e.Value) = asmName)
+                |> Option.iter (fun e -> e.Remove()))
+            // Remove empty ItemGroups resulting from the above
+            doc.Elements(XName.Get("ItemGroup"))
+            |> Seq.filter (fun e -> e.IsEmpty)
+            |> Seq.iter (fun e -> e.Remove())
+            // Add new references
+            let ig = XElement(XName.Get("ItemGroup"))
+            libPaths |> Array.map (fun p ->
+                XElement(XName.Get("Reference"),
+                    XAttribute(XName.Get("Include"), Path.GetFileNameWithoutExtension p),
+                    XElement(XName.Get("HintPath"), XText(p)),
+                    XElement(XName.Get("Private"), XText("true"))))
+            |> Array.iter ig.Add
+            doc.Root.Add ig
         let str = doc.ToString()
         File.WriteAllText(projectFilePath, doc.ToString(), NeutralEncoding)
         CopyTextFile projectFilePath projectFilePath // I assume this fixes line endings?
@@ -229,6 +253,7 @@ module Implementation =
         {
             FileSet = FileSet.FromZip(wsTpl, subdirectory = "templates")
             TargetsFile = Path.Combine(wsRoot, "build", "WebSharper.targets")
+            LibDir = Path.Combine(wsRoot, "lib", "net40")
         }
 
     let InitSource src =
@@ -238,10 +263,10 @@ module Implementation =
             InstallNuGet nuget
             ||> CreateLocalSource
 
-    let InstallTargets opts local =
+    let InstallRefs opts local =
         for p in All opts do
             if IsProjectFile p then
-                InstallTargetsTo local.TargetsFile p
+                InstallRefsTo local p
 
     let Init id opts =
         let opts = Prepare opts
@@ -249,7 +274,7 @@ module Implementation =
         local.FileSet.[id].Populate(opts.Directory)
         MoveProjectFiles opts
         ExpandAllVariables opts
-        InstallTargets opts local
+        InstallRefs opts local
 
 type NuGetPackage with
 

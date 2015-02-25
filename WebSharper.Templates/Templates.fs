@@ -213,7 +213,7 @@ module Implementation =
                 el.SetAttributeValue(proj, targetsRelPath)
                 doc.Root.Add(el)
         do // Install lib/net40/*.dll
-            let libPaths = Directory.GetFiles(ws.LibDir) |> Array.map getRelPath
+            let libPaths = Directory.GetFiles(ws.LibDir, "*.dll") |> Array.map getRelPath
             // Remove existing references
             libPaths |> Array.iter (fun p ->
                 let asmName = Path.GetFileNameWithoutExtension(p)

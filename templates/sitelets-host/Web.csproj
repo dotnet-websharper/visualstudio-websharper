@@ -48,6 +48,10 @@
   <ItemGroup>
     <Folder Include="Scripts" />
     <Content Include="Scripts\*.*" />
+    <Content Include="Scripts\**\*.*" />
+	<Folder Include="Content" />
+    <Content Include="Content\*.*" />
+    <Content Include="Content\**\*.*" />
     <Content Include="Main.html" />
     <Content Include="Web.config" />
     <Folder Include="Properties" />

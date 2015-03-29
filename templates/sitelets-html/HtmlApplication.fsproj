@@ -31,6 +31,9 @@
     <AssemblyName>$safeprojectname$</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <WarningLevel>3</WarningLevel>
+    <StartAction>Program</StartAction>
+    <StartProgram>$([System.Environment]::GetEnvironmentVariable(`WinDir`))\explorer.exe</StartProgram>
+    <StartArguments>$(WebSharperHtmlDirectory)</StartArguments>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Client.fs" />

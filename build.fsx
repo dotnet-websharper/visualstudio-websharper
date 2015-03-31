@@ -3,7 +3,7 @@ open IntelliFactory.Build
 open System.IO
 
 let bt =
-    BuildTool().PackageId("WebSharper.VisualStudio", "3.0-alpha")
+    BuildTool().PackageId("WebSharper.VisualStudio", "3.0")
 
 let templates =
     bt.WithFramework(bt.Framework.Net40)

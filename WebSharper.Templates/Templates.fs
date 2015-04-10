@@ -328,6 +328,7 @@ type Template with
             Template.SiteletsHtml
             Template.SiteletsWebsite
             Template.OwinSelfHost
+            Template.BundleUINext
         ]
 
     static member BundleWebsite = T("bundle-website")
@@ -337,4 +338,5 @@ type Template with
     static member SiteletsHtml = T("sitelets-html")
     static member SiteletsWebsite = T("sitelets-website")
     static member OwinSelfHost = T("owin-selfhost")
+    static member BundleUINext = T("bundle-uinext")
 

@@ -126,3 +126,6 @@ type Template =
     /// The owin-selfhost template.
     static member OwinSelfHost : Template
 
+    /// The bundle-uinext template.
+    static member BundleUINext : Template
+

@@ -42,6 +42,7 @@ let main argv =
             [
                 local, "WebSharper"
                 local, "WebSharper.Owin"
+                local, "WebSharper.UI.Next"
                 online, "Owin"
                 online, "Microsoft.Owin"
                 online, "Microsoft.Owin.Diagnostics"

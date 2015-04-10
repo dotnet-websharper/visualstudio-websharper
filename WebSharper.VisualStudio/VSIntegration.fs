@@ -269,6 +269,25 @@ module VSIntegration =
                 ]
         }
 
+    let bundleUINextSiteTemplate =
+        {
+            Name = "UI.Next Single-Page Application"
+            PathName = "bundle-uinext"
+            DefaultProjectName = "UINextApplication"
+            Description =
+                "Creates a single-page HTML application using WebSharper UI.Next."
+            ProjectFile = "UINextApplication.fsproj"
+            Files = fun file folder ->
+                [
+                    file "Client.fs"
+                    file "Main.fs"
+                    file "Web.config"
+                    file "Global.asax"
+                    file "index.html"
+                ]
+            ExtraNuGetPackages = ["WebSharper.UI.Next"]
+        }
+
     let getWebSharperExtension com =
         let desc = getExtensionDecription ()
         let editions =
@@ -300,6 +319,7 @@ module VSIntegration =
                     siteletsHtmlTemplate
                     siteletsHostTemplate
                     owinSelfHostTemplate
+                    bundleUINextSiteTemplate
                 ]
                 |> List.map (makeProjectTemplate com >> proj)
             )

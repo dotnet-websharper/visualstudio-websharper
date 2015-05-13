@@ -8,16 +8,6 @@ type Action =
     | Home
     | About
 
-module Controls =
-
-    [<Sealed>]
-    type EntryPoint() =
-        inherit Web.Control()
-
-        [<JavaScript>]
-        override __.Body =
-            Client.Main() :> _
-
 module Skin =
     open System.Web
 
@@ -54,7 +44,7 @@ module Site =
         Skin.WithTemplate "HomePage" <| fun ctx ->
             [
                 Div [Text "HOME"]
-                Div [new Controls.EntryPoint()]
+                Div [ClientSide <@ Client.Main() @>]
                 Links ctx
             ]
 

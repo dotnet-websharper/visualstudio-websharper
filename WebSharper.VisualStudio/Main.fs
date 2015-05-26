@@ -7,15 +7,23 @@ let root =
     Path.Combine(__SOURCE_DIRECTORY__, "..")
     |> Path.GetFullPath
 
-let configureVSI wsNupkgPath extraNupkgPaths : VSI.Config =
+let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath : VSI.Config =
     let vsixPath =
         match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
         | null -> Path.ChangeExtension(wsNupkgPath, ".vsix")
         | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
+    let wsTemplatesPath =
+        Path.Combine(
+            Path.GetDirectoryName(wsTemplatesNupkgPath),
+            Path.GetFileNameWithoutExtension(wsTemplatesNupkgPath))
+    if Directory.Exists wsTemplatesPath then Directory.Delete(wsTemplatesPath, true)
+    Directory.CreateDirectory(wsTemplatesPath) |> ignore
+    Compression.ZipFile.ExtractToDirectory(wsTemplatesNupkgPath, wsTemplatesPath)
     {
         NuPkgPath = wsNupkgPath
         ExtraNuPkgPaths = extraNupkgPaths
         RootPath = root
+        TemplatesPath = Path.Combine(wsTemplatesPath, "templates")
         VsixPath = vsixPath
     }
 
@@ -38,6 +46,7 @@ let main argv =
                 eprintfn "Warning: LocalNuget variable not set, using online repository."
                 online
             | localPath -> Some (FsNuGet.FileSystem localPath)
+        let _, wsTemplatesDir = downloadPackage(local, "WebSharper.Templates")
         let extra =
             [
                 local, "WebSharper"
@@ -55,7 +64,7 @@ let main argv =
             |> List.map downloadPackage
             |> Map.ofList
         let ws = extra.["WebSharper"]
-        configureVSI ws extra
+        configureVSI ws extra wsTemplatesDir
     printf "Generating vsix installer..."
     VSI.BuildVsixFile vsixConfig
     printfn " Created %s." vsixConfig.VsixPath

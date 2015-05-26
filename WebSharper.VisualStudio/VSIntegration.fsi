@@ -31,6 +31,9 @@ module VSIntegration =
             /// Root path to the WebSharper sources.
             RootPath : string
 
+            /// Path where the templates can be found.
+            TemplatesPath : string
+
             /// Output path for the `.vsix` file.
             VsixPath : string
         }

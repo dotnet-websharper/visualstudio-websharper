@@ -64,6 +64,7 @@ module VSIntegration =
             NuPkgPath : string
             ExtraNuPkgPaths : Map<string, string>
             RootPath : string
+            TemplatesPath : string
             VsixPath : string
         }
 
@@ -116,7 +117,7 @@ module VSIntegration =
         NG.Package.Create(vn.PackageId, vn.FullVersion, c)
 
     let makeProjectTemplate com def =
-        let dir = com.Config.RootPath +/ "templates" +/ def.PathName
+        let dir = com.Config.TemplatesPath +/ def.PathName
         let file name =
             VST.ProjectItem.FromTextFile(dir +/ name).ReplaceParameters()
             |> VST.FolderElement.Nested

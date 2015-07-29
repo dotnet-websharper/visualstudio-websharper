@@ -173,9 +173,9 @@ module VSIntegration =
             Files = fun file folder ->
                 [
                     file "Client.fs"
-                    file "Main.fs"
                     file "Web.config"
                     file "Global.asax"
+                    file "Global.asax.fs"
                     file "index.html"
                 ]
             ExtraNuGetPackages = []
@@ -196,6 +196,7 @@ module VSIntegration =
                     file "Main.fs"
                     file "Web.config"
                     file "Global.asax"
+                    file "Global.asax.fs"
                     file "Main.html"
                     file "Setup.fsx"
                 ]
@@ -281,10 +282,32 @@ module VSIntegration =
             Files = fun file folder ->
                 [
                     file "Client.fs"
+                    file "Web.config"
+                    file "Global.asax"
+                    file "Global.asax.fs"
+                    file "index.html"
+                ]
+            ExtraNuGetPackages = ["WebSharper.UI.Next"]
+        }
+
+    let siteletsUINextTemplate =
+        {
+            Name = "UI.Next Client-Server Application"
+            PathName = "sitelets-uinext"
+            DefaultProjectName = "Application"
+            Description =
+                "Creates a starter client-server application based on sitelets and UI.Next."
+            ProjectFile = "UI.Next.Application.fsproj"
+            Files = fun file folder ->
+                [
+                    file "Remoting.fs"
+                    file "Client.fs"
                     file "Main.fs"
                     file "Web.config"
                     file "Global.asax"
-                    file "index.html"
+                    file "Global.asax.fs"
+                    file "Main.html"
+                    file "Setup.fsx"
                 ]
             ExtraNuGetPackages = ["WebSharper.UI.Next"]
         }
@@ -321,6 +344,7 @@ module VSIntegration =
                     siteletsHostTemplate
                     owinSelfHostTemplate
                     bundleUINextSiteTemplate
+                    siteletsUINextTemplate
                 ]
                 |> List.map (makeProjectTemplate com >> proj)
             )

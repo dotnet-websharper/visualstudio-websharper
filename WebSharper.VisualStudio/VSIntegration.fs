@@ -177,6 +177,7 @@ module VSIntegration =
                     file "Global.asax"
                     file "Global.asax.fs"
                     file "index.html"
+                    file "Setup.fsx"
                 ]
             ExtraNuGetPackages = []
         }
@@ -286,6 +287,7 @@ module VSIntegration =
                     file "Global.asax"
                     file "Global.asax.fs"
                     file "index.html"
+                    file "Setup.fsx"
                 ]
             ExtraNuGetPackages = ["WebSharper.UI.Next"]
         }

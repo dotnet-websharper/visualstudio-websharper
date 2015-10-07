@@ -179,7 +179,7 @@ module VSIntegration =
                     file "index.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsWebsiteTemplate =
@@ -201,7 +201,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsHtmlTemplate =
@@ -219,7 +219,7 @@ module VSIntegration =
                     file "extra.files"
                     file "Main.html"
                 ]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsHostTemplate =
@@ -269,6 +269,8 @@ module VSIntegration =
                     "Mono.Cecil"
                     "Owin"
                     "WebSharper.Owin"
+                    "WebSharper.Html"
+                    "IntelliFactory.Xml"
                 ]
         }
 
@@ -314,6 +316,33 @@ module VSIntegration =
             ExtraNuGetPackages = ["WebSharper.UI.Next"]
         }
 
+    let siteletsUINextSuaveTemplate =
+        {
+            Name = "UI.Next Client-Server Application with Suave"
+            PathName = "sitelets-uinext-suave"
+            DefaultProjectName = "Application"
+            Description =
+                "Creates a starter client-server application based on sitelets and UI.Next running on Suave."
+            ProjectFile = "UI.Next.Application.Suave.fsproj"
+            Files = fun file folder ->
+                [
+                    file "Remoting.fs"
+                    file "Client.fs"
+                    file "Main.fs"
+                    file "Main.html"
+                ]
+            ExtraNuGetPackages =
+                [
+                    "Mono.Cecil"
+                    "WebSharper.UI.Next"
+                    "WebSharper.Suave"
+                    "Suave"
+                    "WebSharper.Owin"
+                    "Owin"
+                    "Microsoft.Owin"
+                ]
+        }
+
     let getWebSharperExtension com =
         let desc = getExtensionDecription ()
         let editions =
@@ -347,6 +376,7 @@ module VSIntegration =
                     owinSelfHostTemplate
                     bundleUINextSiteTemplate
                     siteletsUINextTemplate
+                    siteletsUINextSuaveTemplate
                 ]
                 |> List.map (makeProjectTemplate com >> proj)
             )

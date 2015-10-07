@@ -49,8 +49,11 @@ let main argv =
         let _, wsTemplatesDir = downloadPackage(local, "WebSharper.Templates")
         let extra =
             [
+                local, "IntelliFactory.Xml"
                 local, "WebSharper"
+                local, "WebSharper.Html"
                 local, "WebSharper.Owin"
+                local, "WebSharper.Suave"
                 local, "WebSharper.UI.Next"
                 online, "Owin"
                 online, "Microsoft.Owin"
@@ -60,6 +63,7 @@ let main argv =
                 online, "Microsoft.Owin.Hosting"
                 online, "Microsoft.Owin.StaticFiles"
                 online, "Mono.Cecil"
+                online, "Suave"
             ]
             |> List.map downloadPackage
             |> Map.ofList

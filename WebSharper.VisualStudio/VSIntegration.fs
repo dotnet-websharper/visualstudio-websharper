@@ -330,6 +330,7 @@ module VSIntegration =
                     file "Client.fs"
                     file "Main.fs"
                     file "Main.html"
+                    file "App.config"
                 ]
             ExtraNuGetPackages =
                 [

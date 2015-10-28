@@ -115,6 +115,7 @@ module Extensions =
         | VS_ExpressAll
         | VS_Premium
         | VS_Pro
+        | VS_Enterprise
         | VS_Ultimate
         | VS_VBExpress
         | VS_VCExpress
@@ -125,6 +126,7 @@ module Extensions =
         static member ExpressAll = VS_ExpressAll
         static member Premium = VS_Premium
         static member Pro = VS_Pro
+        static member Enterprise = VS_Enterprise
         static member Ultimate = VS_Ultimate
         static member VBExpress = VS_VBExpress
         static member VCExpress = VS_VCExpress
@@ -137,6 +139,7 @@ module Extensions =
             | VS_ExpressAll -> "Express_All"
             | VS_Premium -> "Premium"
             | VS_Pro -> "Pro"
+            | VS_Enterprise -> "Enterprise"
             | VS_Ultimate -> "Ultimate"
             | VS_VBExpress -> "VBExpress"
             | VS_VCExpress -> "VCExpress"

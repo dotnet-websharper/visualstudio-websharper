@@ -30,6 +30,7 @@ module Extensions =
         static member ExpressAll : VSEdition
         static member Premium : VSEdition
         static member Pro : VSEdition
+        static member Enterprise : VSEdition
         static member Ultimate : VSEdition
         static member VBExpress : VSEdition
         static member VCExpress : VSEdition

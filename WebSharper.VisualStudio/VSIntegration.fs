@@ -350,6 +350,7 @@ module VSIntegration =
             [
                 VX.VSEdition.Premium
                 VX.VSEdition.Pro
+                VX.VSEdition.Enterprise
                 VX.VSEdition.Ultimate
                 VX.VSEdition.VWDExpress
             ]

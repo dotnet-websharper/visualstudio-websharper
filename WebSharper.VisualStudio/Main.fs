@@ -36,6 +36,13 @@ let downloadPackage (source, id) =
     printfn " Got %s." path
     pkg.Id, fullPath
 
+let wsName =
+#if ZAFIR
+    "Zafir"
+#else
+    "WebSharper"
+#endif
+
 [<EntryPoint>]
 let main argv =
     let vsixConfig =
@@ -46,15 +53,15 @@ let main argv =
                 eprintfn "Warning: LocalNuget variable not set, using online repository."
                 online
             | localPath -> Some (FsNuGet.FileSystem localPath)
-        let _, wsTemplatesDir = downloadPackage(local, "WebSharper.Templates")
+        let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates")
         let extra =
             [
                 local, "IntelliFactory.Xml"
-                local, "WebSharper"
-                local, "WebSharper.Html"
-                local, "WebSharper.Owin"
-                local, "WebSharper.Suave"
-                local, "WebSharper.UI.Next"
+                local, wsName
+                local, wsName + ".Html"
+                local, wsName + ".Owin"
+                local, wsName + ".Suave"
+                local, wsName + ".UI.Next"
                 online, "Owin"
                 online, "Microsoft.Owin"
                 online, "Microsoft.Owin.Diagnostics"
@@ -67,7 +74,7 @@ let main argv =
             ]
             |> List.map downloadPackage
             |> Map.ofList
-        let ws = extra.["WebSharper"]
+        let ws = extra.[wsName]
         configureVSI ws extra wsTemplatesDir
     printf "Generating vsix installer..."
     VSI.BuildVsixFile vsixConfig

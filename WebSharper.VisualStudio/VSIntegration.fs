@@ -25,6 +25,13 @@ module VSIntegration =
     module VX = Extensions
     type Content = Utils.Content
 
+    let wsName, fsharpTools =
+#if ZAFIR
+        "Zafir", ["Zafir.FSharp"]
+#else
+        "WebSharper", []
+#endif
+
     let getExtensionName () =
         "WebSharper"
 
@@ -146,7 +153,7 @@ module VSIntegration =
                 "Creates an F# library capable of containing WebSharper-compiled code."
             ProjectFile = "Library.fsproj"
             Files = fun file folder -> [file "Main.fs"]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = fsharpTools 
         }
 
     let extensionTemplate =
@@ -159,7 +166,7 @@ module VSIntegration =
                     the WebSharper Interface Generator (WIG) tool."
             ProjectFile = "Extension.fsproj"
             Files = fun file folder -> [file "Main.fs"]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = fsharpTools
         }
 
     let bundleSiteTemplate =
@@ -179,7 +186,7 @@ module VSIntegration =
                     file "index.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsWebsiteTemplate =
@@ -201,7 +208,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsHtmlTemplate =
@@ -219,7 +226,7 @@ module VSIntegration =
                     file "extra.files"
                     file "Main.html"
                 ]
-            ExtraNuGetPackages = ["WebSharper.Html"; "IntelliFactory.Xml"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".Html"; "IntelliFactory.Xml"]
         }
 
     let siteletsHostTemplate =
@@ -238,7 +245,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Web.config"
                 ]
-            ExtraNuGetPackages = []
+            ExtraNuGetPackages = fsharpTools
         }
 
     let owinSelfHostTemplate =
@@ -259,7 +266,7 @@ module VSIntegration =
                     file "Main.html"
                 ]
             ExtraNuGetPackages =
-                [
+                fsharpTools @ [
                     "Microsoft.Owin"
                     "Microsoft.Owin.Diagnostics"
                     "Microsoft.Owin.FileSystems"
@@ -291,7 +298,7 @@ module VSIntegration =
                     file "index.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = ["WebSharper.UI.Next"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"]
         }
 
     let siteletsUINextTemplate =
@@ -313,7 +320,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = ["WebSharper.UI.Next"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"]
         }
 
     let siteletsUINextSuaveTemplate =
@@ -333,12 +340,12 @@ module VSIntegration =
                     file "App.config"
                 ]
             ExtraNuGetPackages =
-                [
+                fsharpTools @ [
                     "Mono.Cecil"
-                    "WebSharper.UI.Next"
-                    "WebSharper.Suave"
+                    wsName + ".UI.Next"
+                    wsName + ".Suave"
                     "Suave"
-                    "WebSharper.Owin"
+                    wsName + ".Owin"
                     "Owin"
                     "Microsoft.Owin"
                 ]

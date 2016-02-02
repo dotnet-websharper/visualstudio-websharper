@@ -136,9 +136,11 @@ module VSIntegration =
             VST.Project.FromFile(dir +/ def.ProjectFile, def.Files file folder)
                 .ReplaceParameters()
         let identity = getIdentity ()
-        let extraPkgs =
-            def.ExtraNuGetPackages
-            |> List.map (fun x -> readNugetPackage (Map.find x com.Config.ExtraNuPkgPaths))
+        let findNugetPackage x =
+            match Map.tryFind x com.Config.ExtraNuPkgPaths with
+            | Some p -> readNugetPackage p
+            | _ -> failwithf "Cannot find NuGet package for template: %s" x
+        let extraPkgs = def.ExtraNuGetPackages |> List.map findNugetPackage
         let pkgs = readNugetPackage com.Config.NuPkgPath :: extraPkgs
         let nuGet = VST.NuGetPackages.Create(identity, pkgs)
         VST.ProjectTemplate.Create(meta, project)

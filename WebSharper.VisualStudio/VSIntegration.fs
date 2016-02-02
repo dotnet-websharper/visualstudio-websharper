@@ -275,8 +275,8 @@ module VSIntegration =
                     "Microsoft.Owin.StaticFiles"
                     "Mono.Cecil"
                     "Owin"
-                    "WebSharper.Owin"
-                    "WebSharper.Html"
+                    wsName + ".Owin"
+                    wsName + ".Html"
                     "IntelliFactory.Xml"
                 ]
         }

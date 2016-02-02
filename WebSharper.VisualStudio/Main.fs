@@ -62,6 +62,10 @@ let main argv =
                 local, wsName + ".Owin"
                 local, wsName + ".Suave"
                 local, wsName + ".UI.Next"
+#if ZAFIR
+                local, "Zafir.FSharp"
+                local, "Zafir.CSharp"
+#endif
                 online, "Owin"
                 online, "Microsoft.Owin"
                 online, "Microsoft.Owin.Diagnostics"

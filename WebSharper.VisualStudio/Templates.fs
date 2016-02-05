@@ -512,7 +512,7 @@ module Templates =
             }
 
         static member Project(p: ProjectTemplate)  =
-            let zipName = Path.ChangeExtension(p.PTProject.ProjectFileName, ".zip")
+            let zipName = p.PTTemplateData.TDName + ".zip"
             let xml = p.ToXml().Write()
             let icon = p.PTTemplateData.TDIcon
             let zip =

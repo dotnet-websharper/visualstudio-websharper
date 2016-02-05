@@ -378,7 +378,7 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = fsharpTools @ [wsName + ".Html"; "IntelliFactory.Xml"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.Html"; "IntelliFactory.Xml"]
         }
 #endif
 

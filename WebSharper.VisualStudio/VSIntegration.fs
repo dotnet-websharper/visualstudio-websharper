@@ -25,12 +25,21 @@ module VSIntegration =
     module VX = Extensions
     type Content = Utils.Content
 
-    let wsName, fsharpTools =
 #if ZAFIR
+    let wsName, fsharpTools =
         "Zafir", ["Zafir.FSharp"]
+
+    let getExtensionName () =
+        "Zafir"
+
+    let getExtensionGuid () =
+        Guid("99c562e0-fcfc-4b8c-bcea-976bd67d0275")
+
+    let getExtensionDecription () =
+        "C#/F#-to-JavaScript compiler and web application framework"
 #else
+    let wsName, fsharpTools =
         "WebSharper", []
-#endif
 
     let getExtensionName () =
         "WebSharper"
@@ -40,6 +49,7 @@ module VSIntegration =
 
     let getExtensionDecription () =
         "F#-to-JavaScript compiler and web application framework"
+#endif
 
     let pattern = Regex(@"(\d+(\.\d+)*)(\-(\w+))?$")
 
@@ -353,6 +363,25 @@ module VSIntegration =
                 ]
         }
 
+#if ZAFIR
+    let bundleSiteCSharpTemplate =
+        {
+            Name = "C# Single-Page Application"
+            PathName = "bundle-website-csharp"
+            DefaultProjectName = "SinglePageApplication"
+            Description =
+                "Creates an empty single-page HTML application."
+            ProjectFile = "SinglePageApplication.csproj"
+            Files = fun file folder ->
+                [
+                    file "Client.cs"
+                    file "Web.config"
+                    file "index.html"
+                ]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".Html"; "IntelliFactory.Xml"]
+        }
+#endif
+
     let getWebSharperExtension com =
         let desc = getExtensionDecription ()
         let editions =
@@ -373,7 +402,7 @@ module VSIntegration =
                 .WithVersion(com.VersionInfo.NumericVersion)
                 .WithProducts(products)
                 .WithLicense(File.ReadAllText(Path.Combine(com.Config.RootPath, "LICENSE.md")))
-        let category = ["WebSharper"]
+        let category = [wsName]
         let proj x = VX.VsixContent.ProjectTemplate(category, x)
         let vsix =
             VX.Vsix.Create(identifier,
@@ -388,6 +417,9 @@ module VSIntegration =
                     bundleUINextSiteTemplate
                     siteletsUINextTemplate
                     siteletsUINextSuaveTemplate
+#if ZAFIR
+                    bundleSiteCSharpTemplate
+#endif
                 ]
                 |> List.map (makeProjectTemplate com >> proj)
             )

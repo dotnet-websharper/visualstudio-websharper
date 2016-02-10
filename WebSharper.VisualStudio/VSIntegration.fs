@@ -121,12 +121,17 @@ module VSIntegration =
             ExtraNuGetPackages : string list
         }
 
-    let makeTemplateMetadata com name dpn desc =
-        VST.TemplateData.Create(VST.ProjectType.FSharp,
-            name = name,
-            description = desc,
+    let makeTemplateMetadata com def =
+        VST.TemplateData.Create(
+#if ZAFIR
+            (if def.ProjectFile.EndsWith ".fsproj" then VST.ProjectType.FSharp else VST.ProjectType.CSharp),
+#else
+            VST.ProjectType.FSharp,
+#endif
+            name = def.Name,
+            description = def.Description,
             icon = com.Icon)
-            .WithDefaultProjectName(dpn)
+            .WithDefaultProjectName(def.DefaultProjectName)
 
     let readNugetPackage path =
         let c = Content.ReadBinaryFile(path)
@@ -141,7 +146,7 @@ module VSIntegration =
         let folder name xs =
             VST.Folder.Create(name, xs)
             |> VST.FolderElement.Folder
-        let meta = makeTemplateMetadata com def.Name def.DefaultProjectName def.Description
+        let meta = makeTemplateMetadata com def
         let project =
             VST.Project.FromFile(dir +/ def.ProjectFile, def.Files file folder)
                 .ReplaceParameters()
@@ -366,7 +371,7 @@ module VSIntegration =
 #if ZAFIR
     let bundleSiteCSharpTemplate =
         {
-            Name = "C# Single-Page Application"
+            Name = "Single-Page Application"
             PathName = "bundle-website-csharp"
             DefaultProjectName = "SinglePageApplication"
             Description =
@@ -378,7 +383,24 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.Html"; "IntelliFactory.Xml"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.Html"]
+        }
+
+    let bundleUINextSiteCSharpTemplate =
+        {
+            Name = "UI.Next Single-Page Application"
+            PathName = "bundle-uinext-csharp"
+            DefaultProjectName = "UINextApplication"
+            Description =
+                "Creates a single-page HTML application using WebSharper UI.Next."
+            ProjectFile = "UINextApplication.csproj"
+            Files = fun file folder ->
+                [
+                    file "Client.cs"
+                    file "Web.config"
+                    file "index.html"
+                ]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
         }
 #endif
 

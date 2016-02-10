@@ -441,6 +441,7 @@ module VSIntegration =
                     siteletsUINextSuaveTemplate
 #if ZAFIR
                     bundleSiteCSharpTemplate
+                    bundleUINextSiteCSharpTemplate
 #endif
                 ]
                 |> List.map (makeProjectTemplate com >> proj)

@@ -515,6 +515,7 @@ module Templates =
             let zipName = 
                 p.PTTemplateData.TDName
                     .Replace(".", "").Replace("-", "").Replace(" ", "").Replace("#", "")
+                    + (if p.PTTemplateData.TDProjectType = CSharp then "CSharp" else "")
                     + ".zip"
             let xml = p.ToXml().Write()
             let icon = p.PTTemplateData.TDIcon

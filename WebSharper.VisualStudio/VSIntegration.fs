@@ -400,7 +400,7 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "Zafir.UI.Next.CSharp"]
         }
 #endif
 

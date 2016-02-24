@@ -8,16 +8,15 @@ let root =
     |> Path.GetFullPath
 
 let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp : VSI.Config =
-    let ext = 
-#if ZAFIR
-        if isCSharp then ".CSharp.vsix" else ".FSharp.vsix"
-#else
-         ".vsix"
-#endif        
     let vsixPath =
         match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
-        | null -> Path.ChangeExtension(wsNupkgPath, ext)
-        | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ext)
+        | null -> Path.ChangeExtension(wsNupkgPath, ".vsix")
+        | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
+#if ZAFIR
+    let vsixPath =
+        Path.Combine(Path.GetDirectoryName vsixPath, 
+            (Path.GetFileName vsixPath).Replace("Zafir", if isCSharp then "Zafir.CSharp" else "Zafir.FSharp"))
+#endif
     let wsTemplatesPath =
         Path.Combine(
             Path.GetDirectoryName(wsTemplatesNupkgPath),
@@ -85,7 +84,7 @@ let main argv =
             |> List.map downloadPackage
             |> Map.ofList
         let ws = extra.[wsName]
-        configureVSI ws extra wsTemplatesDir false
+        configureVSI ws extra wsTemplatesDir isCSharp
 #if ZAFIR
     printf "Generating F# vsix installer..."
     let vsixConfig = getVsixConfig false

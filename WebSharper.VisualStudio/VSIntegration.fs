@@ -45,13 +45,13 @@ module VSIntegration =
     let wsName, fsharpTools =
         "WebSharper", []
 
-    let getExtensionName () =
+    let getExtensionName _ =
         "WebSharper"
 
-    let getExtensionGuid () =
+    let getExtensionGuid _ =
         Guid("371cf828-9e17-41cb-b014-496f3e9e7171")
 
-    let getExtensionDecription () =
+    let getExtensionDecription _ =
         "F#-to-JavaScript compiler and web application framework"
 #endif
 
@@ -159,7 +159,7 @@ module VSIntegration =
         let findNugetPackage x =
             match Map.tryFind x com.Config.ExtraNuPkgPaths with
             | Some p -> readNugetPackage p
-            | _ -> failwithf "Cannot find NuGet package for template: %s" x
+            | _ -> failwithf "Cannot find NuGet package for template '%s': %s" def.Name x
         let extraPkgs = def.ExtraNuGetPackages |> List.map findNugetPackage
         let pkgs = readNugetPackage com.Config.NuPkgPath :: extraPkgs
         let nuGet = VST.NuGetPackages.Create(identity, pkgs)

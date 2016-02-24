@@ -65,7 +65,6 @@ let main argv =
 #if ZAFIR
                 local, "Zafir.FSharp"
                 local, "Zafir.CSharp"
-                local, "Zafir.UI.Next.CSharp"
 #endif
                 online, "Owin"
                 online, "Microsoft.Owin"

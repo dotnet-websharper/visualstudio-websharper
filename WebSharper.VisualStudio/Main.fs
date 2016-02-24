@@ -62,20 +62,6 @@ let main argv =
             | localPath -> Some (FsNuGet.FileSystem localPath)
         let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates")
         let extra =
-#if ZAFIR
-            (
-                if isCSharp then
-                    [
-                        local, "Zafir.FSharp"
-                        local, "Zafir.UI.Next.CSharp"
-                    ] 
-                else
-                    [
-                        local, "Zafir.CSharp"
-                        local, "Zafir.UI.Next.CSharp"
-                    ]
-            )@
-#endif
             [
                 local, "IntelliFactory.Xml"
                 local, wsName
@@ -83,6 +69,9 @@ let main argv =
                 local, wsName + ".Owin"
                 local, wsName + ".Suave"
                 local, wsName + ".UI.Next"
+#if ZAFIR
+                local, if isCSharp then "Zafir.CSharp" else "Zafir.FSharp"
+#endif
                 online, "Owin"
                 online, "Microsoft.Owin"
                 online, "Microsoft.Owin.Diagnostics"

@@ -401,7 +401,26 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "Zafir.UI.Next.CSharp"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+        }
+
+    let siteletUINextSiteCSharpTemplate =
+        {
+            Name = "UI.Next Client-Server Application"
+            PathName = "sitelets-uinext-csharp"
+            DefaultProjectName = "UINextApplication"
+            Description =
+                "Creates a starter client-server application based on sitelets and UI.Next."
+            ProjectFile = "UINextApplication.csproj"
+            Files = fun file folder ->
+                [
+                    file "Client.cs"
+                    file "Server.cs"
+                    file "Web.Debug.config"
+                    file "Web.Release.config"
+                    file "Web.config"
+                ]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
         }
 #endif
 
@@ -436,6 +455,7 @@ module VSIntegration =
                             siteletsHostTemplate
                             bundleSiteCSharpTemplate
                             bundleUINextSiteCSharpTemplate
+                            siteletUINextSiteCSharpTemplate
                         ]
                     else
                         [
@@ -444,13 +464,10 @@ module VSIntegration =
                             bundleSiteTemplate
                             siteletsWebsiteTemplate
                             siteletsHtmlTemplate
-                            siteletsHostTemplate
                             owinSelfHostTemplate
                             bundleUINextSiteTemplate
                             siteletsUINextTemplate
                             siteletsUINextSuaveTemplate
-                            bundleSiteCSharpTemplate
-                            bundleUINextSiteCSharpTemplate
                         ]
                 )
 #else

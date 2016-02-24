@@ -29,14 +29,18 @@ module VSIntegration =
     let wsName, fsharpTools =
         "Zafir", ["Zafir.FSharp"]
 
-    let getExtensionName () =
-        "Zafir"
+    let getExtensionName isCSharp =
+        "Zafir." + if isCSharp then "CSharp" else "FSharp" 
 
-    let getExtensionGuid () =
-        Guid("99c562e0-fcfc-4b8c-bcea-976bd67d0275")
+    let getExtensionGuid isCSharp =
+        if isCSharp then
+            Guid("ade77674-5840-4766-8a37-c7228d459ab1")
+        else
+            Guid("99c562e0-fcfc-4b8c-bcea-976bd67d0275")
 
-    let getExtensionDecription () =
-        "C#/F#-to-JavaScript compiler and web application framework"
+    let getExtensionDecription isCSharp =
+        if isCSharp then "C#" else "F#"
+        + "-to-JavaScript compiler and web application framework"
 #else
     let wsName, fsharpTools =
         "WebSharper", []
@@ -105,8 +109,8 @@ module VSIntegration =
                 VersionInfo = VersionInfo.FromFileName(cfg.NuPkgPath).Value
             }
 
-    let getIdentity () =
-        VST.ExtensionIdentity.Create(getExtensionName (), getExtensionGuid ())
+    let getIdentity isCSharp =
+        VST.ExtensionIdentity.Create(getExtensionName isCSharp, getExtensionGuid isCSharp)
 
     type TemplateDef =
         {
@@ -151,7 +155,7 @@ module VSIntegration =
         let project =
             VST.Project.FromFile(dir +/ def.ProjectFile, def.Files file folder)
                 .ReplaceParameters()
-        let identity = getIdentity ()
+        let identity = getIdentity com.Config.IsCSharp
         let findNugetPackage x =
             match Map.tryFind x com.Config.ExtraNuPkgPaths with
             | Some p -> readNugetPackage p
@@ -425,7 +429,7 @@ module VSIntegration =
 #endif
 
     let getWebSharperExtension com =
-        let desc = getExtensionDecription ()
+        let desc = getExtensionDecription com.Config.IsCSharp
         let editions =
             [
                 VX.VSEdition.Premium
@@ -440,7 +444,7 @@ module VSIntegration =
                     yield VX.VSProduct.Create(v, editions).AsSupportedProduct()
             ]
         let identifier =
-            VX.Identifier.Create("IntelliFactory", getIdentity (), com.VersionInfo.PackageId, desc)
+            VX.Identifier.Create("IntelliFactory", getIdentity com.Config.IsCSharp, com.VersionInfo.PackageId, desc)
                 .WithVersion(com.VersionInfo.NumericVersion)
                 .WithProducts(products)
                 .WithLicense(File.ReadAllText(Path.Combine(com.Config.RootPath, "LICENSE.md")))

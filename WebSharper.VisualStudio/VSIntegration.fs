@@ -267,7 +267,11 @@ module VSIntegration =
                     file "Main.html"
                     file "Web.config"
                 ]
+#if ZAFIR
+            ExtraNuGetPackages = ["Zafir.CSharp"]
+#else
             ExtraNuGetPackages = fsharpTools
+#endif
         }
 
     let owinSelfHostTemplate =

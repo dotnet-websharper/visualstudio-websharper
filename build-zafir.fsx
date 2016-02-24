@@ -7,9 +7,8 @@ let bt =
         .VersionFrom("Zafir")
 
 let main =
-    bt.Zafir.Executable("WebSharper.VisualStudio")
+    bt.FSharp.ConsoleExecutable("WebSharper.VisualStudio")
         .SourcesFromProject()
-        
         .References(fun r ->
             [
                 r.Assembly("System.Xml")

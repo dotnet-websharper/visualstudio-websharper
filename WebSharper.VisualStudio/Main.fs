@@ -7,11 +7,17 @@ let root =
     Path.Combine(__SOURCE_DIRECTORY__, "..")
     |> Path.GetFullPath
 
-let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath : VSI.Config =
+let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp : VSI.Config =
+    let ext = 
+#if ZAFIR
+        if isCSharp then ".CSharp.vsix" else ".FSharp.vsix"
+#else
+         ".vsix"
+#endif        
     let vsixPath =
         match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
-        | null -> Path.ChangeExtension(wsNupkgPath, ".vsix")
-        | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
+        | null -> Path.ChangeExtension(wsNupkgPath, ext)
+        | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ext)
     let wsTemplatesPath =
         Path.Combine(
             Path.GetDirectoryName(wsTemplatesNupkgPath),
@@ -25,6 +31,7 @@ let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath : VSI.Config =
         RootPath = root
         TemplatesPath = Path.Combine(wsTemplatesPath, "templates")
         VsixPath = vsixPath
+        IsCSharp = isCSharp
     }
 
 let downloadPackage (source, id) =
@@ -45,7 +52,7 @@ let wsName =
 
 [<EntryPoint>]
 let main argv =
-    let vsixConfig =
+    let getVsixConfig isCSharp =
         let online = None
         let local =
             match System.Environment.GetEnvironmentVariable("LocalNuget") with
@@ -55,6 +62,20 @@ let main argv =
             | localPath -> Some (FsNuGet.FileSystem localPath)
         let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates")
         let extra =
+#if ZAFIR
+            (
+                if isCSharp then
+                    [
+                        local, "Zafir.FSharp"
+                        local, "Zafir.UI.Next.CSharp"
+                    ] 
+                else
+                    [
+                        local, "Zafir.CSharp"
+                        local, "Zafir.UI.Next.CSharp"
+                    ]
+            )@
+#endif
             [
                 local, "IntelliFactory.Xml"
                 local, wsName
@@ -62,11 +83,6 @@ let main argv =
                 local, wsName + ".Owin"
                 local, wsName + ".Suave"
                 local, wsName + ".UI.Next"
-#if ZAFIR
-                local, "Zafir.FSharp"
-                local, "Zafir.CSharp"
-                local, "Zafir.UI.Next.CSharp"
-#endif
                 online, "Owin"
                 online, "Microsoft.Owin"
                 online, "Microsoft.Owin.Diagnostics"
@@ -80,8 +96,20 @@ let main argv =
             |> List.map downloadPackage
             |> Map.ofList
         let ws = extra.[wsName]
-        configureVSI ws extra wsTemplatesDir
-    printf "Generating vsix installer..."
+        configureVSI ws extra wsTemplatesDir false
+#if ZAFIR
+    printf "Generating F# vsix installer..."
+    let vsixConfig = getVsixConfig false
     VSI.BuildVsixFile vsixConfig
     printfn " Created %s." vsixConfig.VsixPath
+    printf "Generating C# vsix installer..."
+    let vsixConfig = getVsixConfig true
+    VSI.BuildVsixFile vsixConfig
+    printfn " Created %s." vsixConfig.VsixPath
+#else
+    printf "Generating vsix installer..."
+    let vsixConfig = getVsixConfig false
+    VSI.BuildVsixFile vsixConfig
+    printfn " Created %s." vsixConfig.VsixPath
+#endif
     0

@@ -36,6 +36,9 @@ module VSIntegration =
 
             /// Output path for the `.vsix` file.
             VsixPath : string
+
+            /// Is this the C# installer
+            IsCSharp : bool
         }
 
     /// Constructs a `.vsix` file with the WebSharper extension.

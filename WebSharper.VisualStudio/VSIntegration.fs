@@ -83,6 +83,7 @@ module VSIntegration =
             RootPath : string
             TemplatesPath : string
             VsixPath : string
+            IsCSharp : bool
         }
 
     let ( +/ ) a b =
@@ -428,6 +429,31 @@ module VSIntegration =
         let proj x = VX.VsixContent.ProjectTemplate(category, x)
         let vsix =
             VX.Vsix.Create(identifier,
+#if ZAFIR
+                (
+                    if com.Config.IsCSharp then
+                        [
+                            siteletsHostTemplate
+                            bundleSiteCSharpTemplate
+                            bundleUINextSiteCSharpTemplate
+                        ]
+                    else
+                        [
+                            libraryTemplate
+                            extensionTemplate
+                            bundleSiteTemplate
+                            siteletsWebsiteTemplate
+                            siteletsHtmlTemplate
+                            siteletsHostTemplate
+                            owinSelfHostTemplate
+                            bundleUINextSiteTemplate
+                            siteletsUINextTemplate
+                            siteletsUINextSuaveTemplate
+                            bundleSiteCSharpTemplate
+                            bundleUINextSiteCSharpTemplate
+                        ]
+                )
+#else
                 [
                     libraryTemplate
                     extensionTemplate
@@ -439,11 +465,8 @@ module VSIntegration =
                     bundleUINextSiteTemplate
                     siteletsUINextTemplate
                     siteletsUINextSuaveTemplate
-#if ZAFIR
-                    bundleSiteCSharpTemplate
-                    bundleUINextSiteCSharpTemplate
-#endif
                 ]
+#endif
                 |> List.map (makeProjectTemplate com >> proj)
             )
         VX.VsixFile.Create(Path.GetFileName(com.Config.VsixPath), vsix)

@@ -33,7 +33,7 @@ module VSIntegration =
         "Zafir." + if isCSharp then "CSharp" else "FSharp" 
 
     let getExtensionName isCSharp =
-        "WebSharper for " + if isCSharp then "C#" else "F#"
+        "WebSharper for " + (if isCSharp then "C#" else "F#") + " (Zafir)"
 
     let getExtensionGuid isCSharp =
         if isCSharp then
@@ -475,11 +475,7 @@ module VSIntegration =
                 .WithVersion(com.VersionInfo.NumericVersion)
                 .WithProducts(products)
                 .WithLicense(File.ReadAllText(Path.Combine(com.Config.RootPath, "LICENSE.md")))
-#if ZAFIR
-        let category = ["WebSharper 4"]
-#else
-        let category = ["WebSharper"]
-#endif
+        let category = [wsName]
         let proj x = VX.VsixContent.ProjectTemplate(category, x)
         let vsix =
             VX.Vsix.Create(identifier,

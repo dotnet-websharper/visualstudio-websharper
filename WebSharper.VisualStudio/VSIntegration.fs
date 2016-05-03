@@ -475,7 +475,11 @@ module VSIntegration =
                 .WithVersion(com.VersionInfo.NumericVersion)
                 .WithProducts(products)
                 .WithLicense(File.ReadAllText(Path.Combine(com.Config.RootPath, "LICENSE.md")))
-        let category = [wsName]
+#if ZAFIR
+        let category = ["WebSharper 4"]
+#else
+        let category = ["WebSharper"]
+#endif
         let proj x = VX.VsixContent.ProjectTemplate(category, x)
         let vsix =
             VX.Vsix.Create(identifier,

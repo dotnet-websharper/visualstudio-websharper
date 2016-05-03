@@ -29,8 +29,11 @@ module VSIntegration =
     let wsName, fsharpTools =
         "Zafir", ["Zafir.FSharp"]
 
-    let getExtensionName isCSharp =
+    let getExtensionId isCSharp =
         "Zafir." + if isCSharp then "CSharp" else "FSharp" 
+
+    let getExtensionName isCSharp =
+        "WebSharper for " + if isCSharp then "C#" else "F#"
 
     let getExtensionGuid isCSharp =
         if isCSharp then
@@ -44,6 +47,9 @@ module VSIntegration =
 #else
     let wsName, fsharpTools =
         "WebSharper", []
+
+    let getExtensionId _ =
+        "WebSharper"
 
     let getExtensionName _ =
         "WebSharper"
@@ -110,7 +116,7 @@ module VSIntegration =
             }
 
     let getIdentity isCSharp =
-        VST.ExtensionIdentity.Create(getExtensionName isCSharp, getExtensionGuid isCSharp)
+        VST.ExtensionIdentity.Create(getExtensionId isCSharp, getExtensionGuid isCSharp)
 
     type TemplateDef =
         {
@@ -378,6 +384,21 @@ module VSIntegration =
         }
 
 #if ZAFIR
+    let libraryCSharpTemplate =
+        {
+            Name = "Library"
+            PathName = "library-csharp"
+            DefaultProjectName = "Library"
+            Description =
+                "Creates a C# library capable of containing WebSharper-compiled code."
+            ProjectFile = "Library.csproj"
+            Files = fun file folder ->
+                [
+                    file "Class1.cs"
+                ]
+            ExtraNuGetPackages = ["Zafir.CSharp"]
+        }
+
     let bundleSiteCSharpTemplate =
         {
             Name = "Single-Page Application"
@@ -433,7 +454,9 @@ module VSIntegration =
 #endif
 
     let getWebSharperExtension com =
-        let desc = getExtensionDecription com.Config.IsCSharp
+        let isCSharp = com.Config.IsCSharp
+        let desc = getExtensionDecription isCSharp
+        let name = getExtensionName isCSharp
         let editions =
             [
                 VX.VSEdition.Premium
@@ -448,7 +471,7 @@ module VSIntegration =
                     yield VX.VSProduct.Create(v, editions).AsSupportedProduct()
             ]
         let identifier =
-            VX.Identifier.Create("IntelliFactory", getIdentity com.Config.IsCSharp, com.VersionInfo.PackageId, desc)
+            VX.Identifier.Create("IntelliFactory", getIdentity isCSharp, name, desc)
                 .WithVersion(com.VersionInfo.NumericVersion)
                 .WithProducts(products)
                 .WithLicense(File.ReadAllText(Path.Combine(com.Config.RootPath, "LICENSE.md")))
@@ -458,9 +481,10 @@ module VSIntegration =
             VX.Vsix.Create(identifier,
 #if ZAFIR
                 (
-                    if com.Config.IsCSharp then
+                    if isCSharp then
                         [
                             siteletsHostTemplate
+                            libraryCSharpTemplate
                             bundleSiteCSharpTemplate
                             bundleUINextSiteCSharpTemplate
                             siteletUINextSiteCSharpTemplate

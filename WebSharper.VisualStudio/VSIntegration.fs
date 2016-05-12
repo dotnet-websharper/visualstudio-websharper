@@ -467,7 +467,7 @@ module VSIntegration =
             ]
         let products =
             [
-                for v in ["10.0"; "11.0"; "12.0"; "14.0"] do
+                for v in ["10.0"; "11.0"; "12.0"; "14.0"; "15.0"] do
                     yield VX.VSProduct.Create(v, editions).AsSupportedProduct()
             ]
         let identifier =

@@ -82,7 +82,7 @@ let main argv =
                 online, "Microsoft.Owin.Hosting", None
                 online, "Microsoft.Owin.StaticFiles", None
                 online, "Mono.Cecil", None
-                online, "Suave", Some "1.1.2"
+                online, "Suave", Some "[1.1.2]"
             ]
             |> List.map downloadPackage
             |> Map.ofList

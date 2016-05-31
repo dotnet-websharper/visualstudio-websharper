@@ -33,9 +33,12 @@ let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp : VSI
         IsCSharp = isCSharp
     }
 
-let downloadPackage (source, id) =
+let downloadPackage (source, id, version) =
     printf "Downloading %s nupkg..." id
-    let pkg = FsNuGet.Package.GetLatest(id, ?source = source)
+    let pkg = 
+        match version with
+        | None -> FsNuGet.Package.GetLatest(id, ?source = source)
+        | Some v -> FsNuGet.Package.GetAtVersion(id, v, ?source = source) 
     let path = Path.Combine("build", sprintf "%s.%s.nupkg" pkg.Id pkg.Version)
     let fullPath = Path.Combine(Directory.GetCurrentDirectory(), path)
     pkg.SaveToFile(fullPath)
@@ -62,24 +65,24 @@ let main argv =
         let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates")
         let extra =
             [
-                local, "IntelliFactory.Xml"
-                local, wsName
-                local, wsName + ".Html"
-                local, wsName + ".Owin"
-                local, wsName + ".Suave"
-                local, wsName + ".UI.Next"
+                local, "IntelliFactory.Xml", None
+                local, wsName, None
+                local, wsName + ".Html", None
+                local, wsName + ".Owin", None
+                local, wsName + ".Suave", None
+                local, wsName + ".UI.Next", None
 #if ZAFIR
-                local, if isCSharp then "Zafir.CSharp" else "Zafir.FSharp"
+                local, (if isCSharp then "Zafir.CSharp" else "Zafir.FSharp"), None
 #endif
-                online, "Owin"
-                online, "Microsoft.Owin"
-                online, "Microsoft.Owin.Diagnostics"
-                online, "Microsoft.Owin.FileSystems"
-                online, "Microsoft.Owin.Host.HttpListener"
-                online, "Microsoft.Owin.Hosting"
-                online, "Microsoft.Owin.StaticFiles"
-                online, "Mono.Cecil"
-                online, "Suave"
+                online, "Owin", None
+                online, "Microsoft.Owin", None
+                online, "Microsoft.Owin.Diagnostics", None
+                online, "Microsoft.Owin.FileSystems", None
+                online, "Microsoft.Owin.Host.HttpListener", None
+                online, "Microsoft.Owin.Hosting", None
+                online, "Microsoft.Owin.StaticFiles", None
+                online, "Mono.Cecil", None
+                online, "Suave", Some "1.1.2"
             ]
             |> List.map downloadPackage
             |> Map.ofList

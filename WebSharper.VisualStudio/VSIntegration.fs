@@ -444,6 +444,7 @@ module VSIntegration =
             Files = fun file folder ->
                 [
                     file "Client.cs"
+                    file "Remoting.cs"
                     file "Server.cs"
                     file "Web.Debug.config"
                     file "Web.Release.config"

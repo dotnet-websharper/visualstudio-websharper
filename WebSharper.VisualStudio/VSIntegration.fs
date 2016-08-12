@@ -433,6 +433,24 @@ module VSIntegration =
             ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
         }
 
+    let bundleUINextSiteCSharpTemplTemplate =
+        {
+            Name = "UI.Next Single-Page Application With Templating"
+            PathName = "bundle-uinext-csharp-templ"
+            DefaultProjectName = "UINextApplication"
+            Description =
+                "Creates a single-page HTML application using WebSharper UI.Next using template code generation."
+            ProjectFile = "UINextApplication.csproj"
+            Files = fun file folder ->
+                [
+                    file "Client.cs"
+                    file "Web.config"
+                    file "index.html"
+                    file "index.tt"
+                ]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+        }
+
     let siteletUINextSiteCSharpTemplate =
         {
             Name = "UI.Next Client-Server Application"
@@ -488,6 +506,7 @@ module VSIntegration =
                             libraryCSharpTemplate
                             bundleSiteCSharpTemplate
                             bundleUINextSiteCSharpTemplate
+                            bundleUINextSiteCSharpTemplTemplate
                             siteletUINextSiteCSharpTemplate
                         ]
                     else

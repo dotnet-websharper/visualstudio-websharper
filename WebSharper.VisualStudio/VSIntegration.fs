@@ -274,7 +274,7 @@ module VSIntegration =
                     file "Web.config"
                 ]
 #if ZAFIR
-            ExtraNuGetPackages = ["Zafir.CSharp"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "FSharp.Core"]
 #else
             ExtraNuGetPackages = fsharpTools
 #endif
@@ -396,7 +396,7 @@ module VSIntegration =
                 [
                     file "Class1.cs"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "FSharp.Core"]
         }
 
     let bundleSiteCSharpTemplate =
@@ -413,7 +413,7 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.Html"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.Html"; "FSharp.Core"]
         }
 
     let bundleUINextSiteCSharpTemplate =
@@ -430,7 +430,7 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
         }
 
     let bundleUINextSiteCSharpTemplTemplate =
@@ -449,7 +449,7 @@ module VSIntegration =
                     file "index.tt"
                     file "index.g.cs"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
         }
 
     let siteletUINextSiteCSharpTemplate =
@@ -469,7 +469,7 @@ module VSIntegration =
                     file "Web.Release.config"
                     file "Web.config"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
         }
 #endif
 

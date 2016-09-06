@@ -79,6 +79,7 @@ let main argv =
                 online, "Microsoft.Owin.Hosting"
                 online, "Microsoft.Owin.StaticFiles"
                 online, "Mono.Cecil"
+                online, "FSharp.Core"
                 local, "Suave"
             ]
             |> List.map downloadPackage

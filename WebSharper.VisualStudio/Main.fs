@@ -62,7 +62,7 @@ let main argv =
                 eprintfn "Warning: LocalNuget variable not set, using online repository."
                 online
             | localPath -> Some (FsNuGet.FileSystem localPath)
-        let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates")
+        let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates", None)
         let extra =
             [
                 local, "IntelliFactory.Xml", None

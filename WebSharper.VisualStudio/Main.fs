@@ -61,7 +61,9 @@ let main argv =
             | null ->
                 eprintfn "Warning: LocalNuget variable not set, using online repository."
                 online
-            | localPath -> Some (FsNuGet.FileSystem localPath)
+            | localPath -> 
+                // we are not using path but internal feed
+                Some (FsNuGet.Online "http://ifbuds02/nuget/")
         let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates", None)
         let extra =
             [

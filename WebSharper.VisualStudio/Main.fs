@@ -7,10 +7,10 @@ let root =
     Path.Combine(__SOURCE_DIRECTORY__, "..")
     |> Path.GetFullPath
 
-let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp : VSI.Config =
+let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp defaultOutDir : VSI.Config =
     let vsixPath =
         match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
-        | null -> Path.ChangeExtension(wsNupkgPath, ".vsix")
+        | null -> Path.Combine(defaultOutDir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
         | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
 #if ZAFIR
     let vsixPath =
@@ -33,17 +33,31 @@ let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp : VSI
         IsCSharp = isCSharp
     }
 
-let downloadPackage (source, id, version) =
-    printf "Downloading %s nupkg..." id
-    let pkg = 
-        match version with
-        | None -> FsNuGet.Package.GetLatest(id, ?source = source)
-        | Some v -> FsNuGet.Package.GetAtVersion(id, v, ?source = source)
-    let path = Path.Combine("build", sprintf "%s.%s.nupkg" pkg.Id pkg.Version)
-    let fullPath = Path.Combine(Directory.GetCurrentDirectory(), path)
-    pkg.SaveToFile(fullPath)
-    printfn " Got %s." path
-    pkg.Id, fullPath
+let findPackage (id) =
+    printf "Searching for %s nupkg... " id
+
+    let dirs = 
+        Directory.GetDirectories("packages", id + ".*")
+        |> Array.filter (fun dir -> 
+            let dn = Path.GetFileName(dir)
+            let c = dn.[id.Length + 1]
+            System.Char.IsNumber c
+        )
+
+    if Array.isEmpty dirs then
+        failwithf "failed to find package %s" id
+
+    let maxDir =
+        dirs
+        |> Seq.maxBy (fun dir ->
+            let dn = Path.GetFileName(dir)
+            let version = dn.[id.Length + 1 .. ].Split('-').[0]
+            printfn "version: %s" version
+            System.Version.Parse(dn.[id.Length + 1 .. ].Split('-').[0])
+        )
+    let nupkgPath = Path.Combine(maxDir, Path.GetFileName(maxDir) + ".nupkg")
+    printfn "found: %s" (Path.GetFileName(nupkgPath))
+    id, nupkgPath
 
 let wsName =
 #if ZAFIR
@@ -56,41 +70,34 @@ let wsName =
 let main argv =
     let getVsixConfig isCSharp =
         let online = None
-        let local =
-            match System.Environment.GetEnvironmentVariable("LocalNuget") with
-            | null ->
-                eprintfn "Warning: LocalNuget variable not set, using online repository."
-                online
-            | localPath -> 
-                // we are not using path but internal feed
-                Some (FsNuGet.Online "http://ifbuds02/nuget/")
-        let _, wsTemplatesDir = downloadPackage(local, wsName + ".Templates", None)
+        let _, wsTemplatesDir = findPackage(wsName + ".Templates")
         let extra =
             [
-                local, "IntelliFactory.Xml", None
-                local, wsName, None
-                local, wsName + ".Html", None
-                local, wsName + ".Owin", None
-                local, wsName + ".Suave", None
-                local, wsName + ".UI.Next", None
+                "IntelliFactory.Xml"
+                wsName
+                wsName + ".Html"
+                wsName + ".Owin"
+                wsName + ".Suave"
+                wsName + ".UI.Next"
 #if ZAFIR
-                local, (if isCSharp then "Zafir.CSharp" else "Zafir.FSharp"), None
-                online, "FSharp.Core", Some "4.0.0.1"
+                (if isCSharp then "Zafir.CSharp" else "Zafir.FSharp")
+                "FSharp.Core"
 #endif
-                online, "Owin", None
-                online, "Microsoft.Owin", None
-                online, "Microsoft.Owin.Diagnostics", None
-                online, "Microsoft.Owin.FileSystems", None
-                online, "Microsoft.Owin.Host.HttpListener", None
-                online, "Microsoft.Owin.Hosting", None
-                online, "Microsoft.Owin.StaticFiles", None
-                online, "Mono.Cecil", None
-                local, "Suave", None
+                "Owin"
+                "Microsoft.Owin"
+                "Microsoft.Owin.Diagnostics"
+                "Microsoft.Owin.FileSystems"
+                "Microsoft.Owin.Host.HttpListener"
+                "Microsoft.Owin.Hosting"
+                "Microsoft.Owin.StaticFiles"
+                "Mono.Cecil"
+                "Suave"
             ]
-            |> List.map downloadPackage
+            |> List.map findPackage
             |> Map.ofList
         let ws = extra.[wsName]
-        configureVSI ws extra wsTemplatesDir isCSharp
+        let defaultOutDir = Path.Combine(System.Environment.CurrentDirectory, "build")
+        configureVSI ws extra wsTemplatesDir isCSharp defaultOutDir
 #if ZAFIR
     printf "Generating F# vsix installer..."
     let vsixConfig = getVsixConfig false

@@ -37,25 +37,6 @@
     <DocumentationFile>bin\Release\$(Name).XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Utils.fsi" />
-    <Compile Include="Utils.fs" />
-    <Compile Include="NuGet.fsi" />
-    <Compile Include="NuGet.fs" />
-    <Compile Include="Templates.fsi" />
-    <Compile Include="Templates.fs" />
-    <Compile Include="Extensions.fsi" />
-    <Compile Include="Extensions.fs" />
-    <Compile Include="VSIntegration.fsi" />
-    <Compile Include="VSIntegration.fs" />
-    <Compile Include="Main.fs" />
-  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -73,4 +54,24 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <Import Project="../build/net45/$(Name).proj" />
+  <ItemGroup>
+    <Compile Include="Utils.fsi" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="NuGet.fsi" />
+    <Compile Include="NuGet.fs" />
+    <Compile Include="Templates.fsi" />
+    <Compile Include="Templates.fs" />
+    <Compile Include="Extensions.fsi" />
+    <Compile Include="Extensions.fs" />
+    <Compile Include="VSIntegration.fsi" />
+    <Compile Include="VSIntegration.fs" />
+    <Compile Include="Main.fs" />
+    <Content Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
 </Project>

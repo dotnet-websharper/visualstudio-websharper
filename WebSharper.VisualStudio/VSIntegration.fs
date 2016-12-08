@@ -63,6 +63,10 @@ module VSIntegration =
 
     let pattern = Regex(@"(\d+(\.\d+)*)(\-(\w+))?$")
 
+    let OverrideVersion (fn: string) = 
+        // modify build number to have a new vsix version using the same WS package
+        fn.Replace("4.0.151.28", "4.0.151.29")
+
     type VersionInfo =
         {
             FullVersion : string
@@ -112,7 +116,7 @@ module VSIntegration =
             {
                 Config = cfg
                 Icon = icon
-                VersionInfo = VersionInfo.FromFileName(cfg.NuPkgPath).Value
+                VersionInfo = VersionInfo.FromFileName(OverrideVersion(cfg.NuPkgPath)).Value
             }
 
     let getIdentity isCSharp =

@@ -12,6 +12,7 @@ let configureVSI wsNupkgPath extraNupkgPaths wsTemplatesNupkgPath isCSharp defau
         match System.Environment.GetEnvironmentVariable "NuGetPackageOutputPath" with
         | null -> Path.Combine(defaultOutDir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
         | dir -> Path.Combine(dir, Path.GetFileNameWithoutExtension(wsNupkgPath) + ".vsix")
+    let vsixPath = VSIntegration.OverrideVersion(vsixPath) 
 #if ZAFIR
     let vsixPath =
         Path.Combine(Path.GetDirectoryName vsixPath, 

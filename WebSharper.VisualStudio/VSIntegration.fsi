@@ -41,6 +41,9 @@ module VSIntegration =
             IsCSharp : bool
         }
 
+    /// Can override vsix version
+    val OverrideVersion : string -> string
+
     /// Constructs a `.vsix` file with the WebSharper extension.
     val BuildVsixFile : Config -> unit
 

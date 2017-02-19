@@ -334,7 +334,7 @@ module VSIntegration =
                     file "index.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"; "HtmlAgilityPack"]
         }
 
     let siteletsUINextTemplate =
@@ -356,7 +356,7 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"]
+            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"; "HtmlAgilityPack"]
         }
 
     let siteletsUINextSuaveTemplate =
@@ -384,6 +384,7 @@ module VSIntegration =
                     wsName + ".Owin"
                     "Owin"
                     "Microsoft.Owin"
+                    "HtmlAgilityPack"
                 ]
         }
 
@@ -434,7 +435,7 @@ module VSIntegration =
                     file "Web.config"
                     file "index.html"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"; "HtmlAgilityPack"]
         }
 
     let bundleUINextSiteCSharpTemplTemplate =
@@ -453,7 +454,7 @@ module VSIntegration =
                     file "index.tt"
                     file "index.g.cs"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"; "HtmlAgilityPack"]
         }
 
     let siteletUINextSiteCSharpTemplate =
@@ -473,7 +474,7 @@ module VSIntegration =
                     file "Web.Release.config"
                     file "Web.config"
                 ]
-            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"]
+            ExtraNuGetPackages = ["Zafir.CSharp"; "Zafir.UI.Next"; "FSharp.Core"; "HtmlAgilityPack"]
         }
 #endif
 

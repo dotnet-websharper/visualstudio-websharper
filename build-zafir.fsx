@@ -31,13 +31,11 @@ let main =
                 r.NuGet("Zafir.CSharp").Latest(true).Reference()
                 r.NuGet("Zafir.Html").Latest(true).Reference()
                 r.NuGet("Zafir.Owin").Latest(true).Reference()
-                r.NuGet("Zafir.Suave").Latest(true).Reference()
                 r.NuGet("Zafir.UI.Next").Latest(true).Reference()
                 r.NuGet("Zafir").Latest(true).Reference()
                 r.NuGet("Zafir.UI.Next").Latest(true).Reference()
                 r.NuGet("Zafir.Templates").Latest(true).Reference()
 
-                r.NuGet("FSharp.Core").Version("[4.0.0.1]").Reference()
                 r.NuGet("Owin").Reference()
                 r.NuGet("Microsoft.Owin").Reference()
                 r.NuGet("Microsoft.Owin.Diagnostics").Reference()
@@ -46,7 +44,6 @@ let main =
                 r.NuGet("Microsoft.Owin.Hosting").Reference()
                 r.NuGet("Microsoft.Owin.StaticFiles").Reference()
                 r.NuGet("Mono.Cecil").Reference()
-                r.NuGet("Suave").Reference()
 
             ])
         |> addZafirConstant

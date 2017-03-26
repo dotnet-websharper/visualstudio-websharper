@@ -29,7 +29,7 @@ let main =
                 r.NuGet("WebSharper.UI.Next").Latest(true).Reference()
                 r.NuGet("WebSharper.Templates").Latest(true).Reference()
 
-                r.NuGet("FSharp.Core").Reference()
+                r.NuGet("FSharp.Core").Version("[4.0.0.1]").Reference()
                 r.NuGet("Owin").Reference()
                 r.NuGet("Microsoft.Owin").Reference()
                 r.NuGet("Microsoft.Owin.Diagnostics").Reference()

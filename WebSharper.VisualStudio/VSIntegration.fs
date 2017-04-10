@@ -385,6 +385,7 @@ module VSIntegration =
                     "Owin"
                     "Microsoft.Owin"
                     "HtmlAgilityPack"
+                    "FSharp.Core"
                 ]
         }
 

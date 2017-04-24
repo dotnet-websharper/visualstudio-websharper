@@ -334,7 +334,13 @@ module VSIntegration =
                     file "index.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"; "HtmlAgilityPack"]
+            ExtraNuGetPackages =
+                fsharpTools @ [
+                    wsName + ".UI.Next"
+#if ZAFIR
+                    "HtmlAgilityPack"
+#endif
+                ]
         }
 
     let siteletsUINextTemplate =
@@ -356,7 +362,13 @@ module VSIntegration =
                     file "Main.html"
                     file "Setup.fsx"
                 ]
-            ExtraNuGetPackages = fsharpTools @ [wsName + ".UI.Next"; "HtmlAgilityPack"]
+            ExtraNuGetPackages =
+                fsharpTools @ [
+                    wsName + ".UI.Next"
+#if ZAFIR
+                    "HtmlAgilityPack"
+#endif
+                ]
         }
 
     let siteletsUINextSuaveTemplate =
@@ -384,8 +396,10 @@ module VSIntegration =
                     wsName + ".Owin"
                     "Owin"
                     "Microsoft.Owin"
+#if ZAFIR
                     "HtmlAgilityPack"
                     "FSharp.Core"
+#endif
                 ]
         }
 

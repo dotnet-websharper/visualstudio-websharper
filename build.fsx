@@ -23,7 +23,6 @@ let main =
                 r.NuGet("WebSharper").Latest(true).Reference()
                 r.NuGet("WebSharper.Html").Latest(true).Reference()
                 r.NuGet("WebSharper.Owin").Latest(true).Reference()
-                r.NuGet("WebSharper.Suave").Latest(true).Reference()
                 r.NuGet("WebSharper.UI.Next").Latest(true).Reference()
                 r.NuGet("WebSharper").Latest(true).Reference()
                 r.NuGet("WebSharper.UI.Next").Latest(true).Reference()
@@ -38,7 +37,6 @@ let main =
                 r.NuGet("Microsoft.Owin.Hosting").Reference()
                 r.NuGet("Microsoft.Owin.StaticFiles").Reference()
                 r.NuGet("Mono.Cecil").Reference()
-                r.NuGet("Suave").Reference()
             ])
 
 bt.Solution [

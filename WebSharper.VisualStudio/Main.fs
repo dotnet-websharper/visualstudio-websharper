@@ -93,7 +93,9 @@ let main argv =
                 "Microsoft.Owin.StaticFiles"
                 "Mono.Cecil"
                 "Suave"
+#if ZAFIR
                 "HtmlAgilityPack"
+#endif
             ]
             |> List.map findPackage
             |> Map.ofList
